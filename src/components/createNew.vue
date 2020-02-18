@@ -51,7 +51,7 @@ export default {
     },
     save () {
       this.$axios
-        .post('', {
+        .post('http://d4bbac75.ngrok.io/api/item/', {
           name: this.input.equipmentName,
           code: this.input.equipmentCode,
           available: this.input.available
