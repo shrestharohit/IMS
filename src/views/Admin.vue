@@ -23,7 +23,7 @@
                     prepend-inner-icon="mdi-magnify"
                   ></v-text-field>
                 </v-col>
-
+                <v-btn  @click="employee ()"> Employee </v-btn>
                 <!-- New Request page -->
                 <v-btn tile depressed @click="requestSheet = !requestSheet">New Requests</v-btn>
                 <v-bottom-sheet v-model="requestSheet">
@@ -49,7 +49,7 @@
                 height="380px"
               >
                 <template v-slot:item.action="{ item }">
-                  <v-icon color="blue" @click="editItem(item)">mdi-pencil</v-icon>
+                  <v-icon color="blue">mdi-pencil</v-icon>
                   <v-icon color="red" @click="deleteItem( item )">mdi-close</v-icon>
                 </template>
               </v-data-table>
@@ -85,11 +85,11 @@ export default {
       { text: 'Actions', value: 'action', sortable: false }
     ],
     items: [],
-    editedIndex: -1,
-    editedItem: {
-      name: '',
-      code: ''
-    },
+    // editedIndex: -1,
+    // editedItem: {
+    //   name: '',
+    //   code: ''
+    // },
     dataUrl: 'http://d4bbac75.ngrok.io/api/item/'
 
   }),
@@ -99,11 +99,12 @@ export default {
     createNew
   },
   methods: {
-    editItem (item) {
-      this.editedIndex = this.items.indexOf(item)
-      this.editedItem = Object.assign({}, item)
-      // this.dialog = true
-      this.sheet = true
+    employee () {
+      this.$router.replace({ name: 'employee' })
+    //   this.editedIndex = this.items.indexOf(item)
+    //   this.editedItem = Object.assign({}, item)
+    //   // this.dialog = true
+    //   this.sheet = true
     },
     deleteItem (item) {
       const index = this.items.indexOf(item)
