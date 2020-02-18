@@ -2,14 +2,30 @@ z<template>
   <div>
     <navBar />
     <v-content>
-      <v-container class="fill-height" fluid>
+      <v-tabs
+        v-model="tab"
+        dark
+        vertical
+      >
+        <v-tabs-slider></v-tabs-slider>
+        <v-tab
+          v-for="i in tabs"
+          :key="i"
+          :href="`#tab-${i}`"
+          fixed-tabs
+        >
+          Tab {{ i }}
+        </v-tab>
+        <v-tab-item
+          :value="'tab-' + 1"
+        >
+            <v-container class="fill-height" fluid>
         <v-row align="center" justify="center">
           <v-col cols="12" sm="8" md="12">
-            <v-card class="elevation-12" height="auto">
               <v-card-title>
                 Table
                 <v-spacer />
-                <v-col md="3">
+                <v-col md="2">
                   <v-text-field
                     v-model="search"
                     label="Search"
@@ -23,7 +39,6 @@ z<template>
                     prepend-inner-icon="mdi-magnify"
                   ></v-text-field>
                 </v-col>
-                <v-btn @click="redirect()">Admin</v-btn>
               </v-card-title>
               <v-data-table
                 :headers="headers"
@@ -47,10 +62,11 @@ z<template>
                   </v-dialog>
                 </template>
               </v-data-table>
-            </v-card>
           </v-col>
         </v-row>
       </v-container>
+        </v-tab-item>
+      </v-tabs>
     </v-content>
   </div>
 </template>
@@ -60,6 +76,8 @@ import navBar from '../components/navBar.vue'
 export default {
   data: () => ({
     dialog: false,
+    tab: null,
+    tabs: 1,
     search: '',
     headers: [
       {

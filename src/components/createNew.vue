@@ -1,15 +1,18 @@
 <template>
   <div>
-      <v-container dense>
+      <v-toolbar dark color="black" dense >
+      <v-toolbar-title>Create New</v-toolbar-title>
+    </v-toolbar>
+    <v-container align="center" justify="center">
       <v-row>
-        <v-col cols="12" sm="6" md="2">
+        <v-col cols="12" sm="3" md="3">
           <v-text-field
           v-model="input.equipmentName"
           label="Equipment Name"
           required
           ></v-text-field>
         </v-col>
-        <v-col cols="12" sm="6" md="2">
+        <v-col cols="12" sm="6" md="3">
           <v-text-field
           v-model="input.equipmentCode"
           label="Equipment Code"
@@ -22,12 +25,11 @@
           label="Available"
           required></v-switch>
         </v-col>
-      </v-row>
-      <v-card-actions>
-        <v-spacer></v-spacer>
-        <v-btn tile depressed @click="clear()">Clear</v-btn>
-        <v-btn tile depressed @click="save()">Save</v-btn>
-      </v-card-actions>
+        </v-row>
+        <v-card-actions>
+        <v-spacer/><v-btn tile class="black mr-1" dark @click="clear()">Clear</v-btn>
+        <v-btn tile class="black" dark @click="save()">Save</v-btn>
+        </v-card-actions>
     </v-container>
   </div>
 </template>
@@ -56,6 +58,9 @@ export default {
           code: this.input.equipmentCode,
           available: this.input.available
         })
+        .then(
+          this.$emit('closeBottomSheet')
+        )
     }
   }
 }

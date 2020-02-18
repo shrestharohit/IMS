@@ -5,9 +5,13 @@
       <v-container class="fill-height" fluid>
         <v-row align="center" justify="center">
           <v-col cols="12" sm="8" md="12">
-            <v-card class="elevation-12" height="auto">
+            <!-- <v-card height="auto"> -->
               <v-card-title>
-                Table
+                <v-breadcrumbs :items="myitem">
+                  <template v-slot:divider>
+                    <v-icon>mdi-chevron-right</v-icon>
+                  </template>
+                </v-breadcrumbs>
                 <v-spacer />
                 <v-col md="3">
                   <v-text-field
@@ -23,9 +27,14 @@
                     prepend-inner-icon="mdi-magnify"
                   ></v-text-field>
                 </v-col>
-                <v-btn @click="employee ()">Employee</v-btn>
+                <v-btn tile class="black mr-1" dark @click="employee ()">Employee</v-btn>
                 <!-- New Request page -->
-                <v-btn tile depressed @click="requestSheet = !requestSheet">New Requests</v-btn>
+                <v-btn
+                  tile
+                  class="black mr-1"
+                  dark
+                  @click="requestSheet = !requestSheet"
+                >New Requests</v-btn>
                 <v-bottom-sheet v-model="requestSheet">
                   <v-sheet class="text-center" height="auto">
                     <requestItem />
@@ -33,10 +42,10 @@
                 </v-bottom-sheet>
 
                 <!-- Create New page -->
-                <v-btn tile depressed @click="sheet = !sheet">Create New</v-btn>
+                <v-btn tile class="black" dark @click="sheet = !sheet">Create New</v-btn>
                 <v-bottom-sheet v-model="sheet">
                   <v-sheet height="auto">
-                    <createNew />
+                    <createNew @closeBottomSheet="sheet=false" />
                   </v-sheet>
                 </v-bottom-sheet>
               </v-card-title>
@@ -53,14 +62,13 @@
                 class="elevation-1"
                 :search="search"
                 fixed-header
-                height="380px"
+                height= auto
               >
                 <template v-slot:item.action="{ item }">
-                  <v-icon color="blue">mdi-pencil</v-icon>
                   <v-icon color="red" @click="deleteItem( item )">mdi-close</v-icon>
                 </template>
               </v-data-table>
-            </v-card>
+            <!-- </v-card> -->
           </v-col>
         </v-row>
       </v-container>
@@ -86,17 +94,22 @@ export default {
       },
       { text: 'Equipment Code', value: 'code' },
       { text: 'Added Date', value: 'added_date' },
-      // { text: 'Vendor Name', value: 'vendorName' },
       { text: 'Availibility Status', value: 'available' },
       { text: 'Assigned To', value: 'assigned_to.employee.user.username' },
       { text: 'Actions', value: 'action', sortable: false }
     ],
     items: [],
-    // editedIndex: -1,
-    // editedItem: {
-    //   name: '',
-    //   code: ''
-    // },
+    myitem: [
+      {
+        text: 'Admin',
+        disabled: false,
+        href: '/admin'
+      },
+      {
+        text: 'Home',
+        disabled: true
+      }
+    ],
     dataUrl: 'http://d4bbac75.ngrok.io/api/item/',
     loading: false
   }),
@@ -108,10 +121,6 @@ export default {
   methods: {
     employee () {
       this.$router.replace({ name: 'employee' })
-      //   this.editedIndex = this.items.indexOf(item)
-      //   this.editedItem = Object.assign({}, item)
-      //   this.dialog = true
-      //   this.sheet = true
     },
     deleteItem (item) {
       const index = this.items.indexOf(item)
