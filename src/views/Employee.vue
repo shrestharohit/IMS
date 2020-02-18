@@ -23,7 +23,7 @@ z<template>
                     prepend-inner-icon="mdi-magnify"
                   ></v-text-field>
                 </v-col>
-                <v-btn  @click="redirect()"> Admin </v-btn>
+                <v-btn @click="redirect()">Admin</v-btn>
               </v-card-title>
               <v-data-table
                 :headers="headers"
@@ -33,31 +33,20 @@ z<template>
                 fixed-header
                 height="380px"
               >
-                <template #item.action v-slot:activator="{ on }">
-                  <v-btn class="ma-2" rounded outlined color="success" v-on="on">
-                    <!-- <v-icon left>mdi-thumb-up</v-icon> -->
-                    Request
-                  </v-btn>
+                <template v-slot:item.action="{ }">
+                  <v-icon color="green" @click.stop="dialog = true">mdi-plus-circle-outline</v-icon>
+                  <v-dialog v-model="dialog" width="500">
+                    <v-card>
+                      <v-card-title class="headline grey lighten-2" primary-title>Privacy Policy</v-card-title>
+
+                      <v-card-text>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</v-card-text>
+                      <v-card-actions>
+                        <v-btn color="primary" @click="dialog = false">I accept</v-btn>
+                      </v-card-actions>
+                    </v-card>
+                  </v-dialog>
                 </template>
               </v-data-table>
-              <v-dialog v-model="dialog" width="500">
-                  <template v-slot:activator="{ on }">
-                    <v-btn color="red lighten-2" dark v-on="on">Click Me</v-btn>
-                  </template>
-
-                  <v-card>
-                    <v-card-title class="headline grey lighten-2" primary-title>Privacy Policy</v-card-title>
-
-                    <v-card-text>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</v-card-text>
-
-                    <v-divider></v-divider>
-
-                    <v-card-actions>
-                      <v-spacer></v-spacer>
-                      <v-btn color="primary" text @click="dialog = false">I accept</v-btn>
-                    </v-card-actions>
-                  </v-card>
-                </v-dialog>
             </v-card>
           </v-col>
         </v-row>
