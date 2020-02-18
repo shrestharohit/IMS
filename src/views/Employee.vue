@@ -23,6 +23,7 @@ z<template>
                     prepend-inner-icon="mdi-magnify"
                   ></v-text-field>
                 </v-col>
+                <v-btn  @click="redirect()"> Admin </v-btn>
               </v-card-title>
               <v-data-table
                 :headers="headers"
@@ -91,15 +92,20 @@ export default {
   components: {
     navBar
   },
-  mounted () {
-    if (localStorage.getItem('pageDetails') === 'employee') {
-    } else if (localStorage.getItem('pageDetails')) {
-      var pageAuth = localStorage.getItem('pageDetails')
-      this.$router.replace({ name: pageAuth })
-    } else {
-      this.$router.replace({ name: 'login' })
-      localStorage.clear()
+  methods: {
+    redirect () {
+      this.$router.replace({ name: 'admin' })
     }
+  },
+  mounted () {
+    // if (localStorage.getItem('pageDetails') === 'employee') {
+    // } else if (localStorage.getItem('pageDetails')) {
+    //   var pageAuth = localStorage.getItem('pageDetails')
+    //   this.$router.replace({ name: pageAuth })
+    // } else {
+    //   this.$router.replace({ name: 'login' })
+    //   localStorage.clear()
+    // }
   }
 }
 </script>
