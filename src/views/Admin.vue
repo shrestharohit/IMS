@@ -23,11 +23,11 @@
                     prepend-inner-icon="mdi-magnify"
                   ></v-text-field>
                 </v-col>
-                <v-btn  @click="employee ()"> Employee </v-btn>
+                <v-btn @click="employee ()">Employee</v-btn>
                 <!-- New Request page -->
                 <v-btn tile depressed @click="requestSheet = !requestSheet">New Requests</v-btn>
                 <v-bottom-sheet v-model="requestSheet">
-                  <v-sheet class="text-center" height= auto>
+                  <v-sheet class="text-center" height="auto">
                     <requestItem />
                   </v-sheet>
                 </v-bottom-sheet>
@@ -35,11 +35,18 @@
                 <!-- Create New page -->
                 <v-btn tile depressed @click="sheet = !sheet">Create New</v-btn>
                 <v-bottom-sheet v-model="sheet">
-                  <v-sheet height= auto>
+                  <v-sheet height="auto">
                     <createNew />
                   </v-sheet>
                 </v-bottom-sheet>
               </v-card-title>
+              <v-progress-linear
+                :active="loading"
+                :indeterminate="loading"
+                absolute
+                top
+                color="deep-purple accent-4"
+              ></v-progress-linear>
               <v-data-table
                 :headers="headers"
                 :items="items"
@@ -90,8 +97,8 @@ export default {
     //   name: '',
     //   code: ''
     // },
-    dataUrl: 'http://d4bbac75.ngrok.io/api/item/'
-
+    dataUrl: 'http://d4bbac75.ngrok.io/api/item/',
+    loading: false
   }),
   components: {
     navBar,
@@ -101,26 +108,33 @@ export default {
   methods: {
     employee () {
       this.$router.replace({ name: 'employee' })
-    //   this.editedIndex = this.items.indexOf(item)
-    //   this.editedItem = Object.assign({}, item)
-    //   // this.dialog = true
-    //   this.sheet = true
+      //   this.editedIndex = this.items.indexOf(item)
+      //   this.editedItem = Object.assign({}, item)
+      //   this.dialog = true
+      //   this.sheet = true
     },
     deleteItem (item) {
       const index = this.items.indexOf(item)
       console.log(item.id)
       this.$axios.delete(this.dataUrl + item.id + '/')
-      confirm('Are you sure you want to delete this Item?') && this.items.splice(index, 1)
+      confirm('Are you sure you want to delete this Item?') &&
+        this.items.splice(index, 1)
     },
     getData () {
-      this.$axios.get(this.dataUrl)
-        .then(response => {
-          this.items = response.data
-        }
-        )
+      this.$axios.get(this.dataUrl).then(response => {
+        console.log(response.data)
+        this.items = response.data
+      })
+    },
+    loader () {
+      this.loading = true
+      setTimeout(() => {
+        this.getData()
+        this.loading = false
+      }, 1500)
     }
   },
-  async mounted () {
+  mounted () {
     // if (localStorage.getItem('pageDetails') === 'admin') {
     // } else if (localStorage.getItem('pageDetails')) {
     //   var pageAuth = localStorage.getItem('pageDetails')
@@ -129,7 +143,7 @@ export default {
     //   this.$router.replace({ name: 'login' })
     //   localStorage.clear()
     // }
-    await this.getData()
+    this.loader()
   }
 }
 </script>
