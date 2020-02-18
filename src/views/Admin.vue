@@ -24,28 +24,21 @@
                   ></v-text-field>
                 </v-col>
 
-                <v-dialog v-model="dialog" max-width="500px">
-                  <template v-slot:activator="{ on }">
-                    <v-btn tile depressed v-on="on">Create New</v-btn>
-                  </template>
-                  <v-card>
-                    <v-card-title>Create New</v-card-title>
-                    <v-card-text>
-                      <v-container grid-list-md>
-                        <v-layout wrap>
-                          <v-text-field v-model="editedItem.name" label="Item Name"></v-text-field>
-                          <v-text-field v-model="editedItem.vendor" label="Vendor Name"></v-text-field>
-                          <v-text-field v-model="editedItem.status" label="Availability Status"></v-text-field>
-                        </v-layout>
-                      </v-container>
-                    </v-card-text>
-                    <v-card-actions>
-                      <v-spacer></v-spacer>
-                      <v-btn tile depressed @click="close()">Cancel</v-btn>
-                      <v-btn tile depressed @click="save">Save</v-btn>
-                    </v-card-actions>
-                  </v-card>
-                </v-dialog>
+                <!-- New Request page -->
+                <v-btn tile depressed @click="requestSheet = !requestSheet">New Requests</v-btn>
+                <v-bottom-sheet v-model="requestSheet">
+                  <v-sheet class="text-center" height= auto>
+                    <requestItem />
+                  </v-sheet>
+                </v-bottom-sheet>
+
+                <!-- Create New page -->
+                <v-btn tile depressed @click="sheet = !sheet">Create New</v-btn>
+                <v-bottom-sheet v-model="sheet">
+                  <v-sheet height= auto>
+                    <createNew />
+                  </v-sheet>
+                </v-bottom-sheet>
               </v-card-title>
               <v-data-table
                 :headers="headers"
@@ -56,8 +49,8 @@
                 height="380px"
               >
                 <template v-slot:item.action="{ item }">
-                  <v-icon small @click="editItem(item.id)">mdi-pencil</v-icon>
-                  <v-icon small @click="deleteItem()">mdi-delete</v-icon>
+                  <v-icon color="blue" @click="editItem(item)">mdi-pencil</v-icon>
+                  <v-icon color="red" @click="deleteItem( item )">mdi-close</v-icon>
                 </template>
               </v-data-table>
             </v-card>
@@ -70,46 +63,50 @@
 
 <script>
 import navBar from '../components/navBar.vue'
+import requestItem from '../components/requestItem.vue'
+import createNew from '../components/createNew.vue'
+
 export default {
   data: () => ({
-    dialog: false,
+    sheet: false,
+    requestSheet: false,
     search: '',
     headers: [
       {
-        text: 'Item Name',
+        text: 'Equipment Name',
         align: 'left',
-        value: 'name'
+        value: 'equipmentName'
       },
-      { text: 'Vendor', align: 'center', value: 'vendor' },
-      { text: 'Availibility Status', align: 'center', value: 'status' },
-      { text: 'Actions', align: 'right', value: 'action', sortable: false }
+      { text: 'Equipment Code', value: 'equipmentCode' },
+      { text: 'Added Date', value: 'addedDate' },
+      { text: 'Vendor Name', value: 'vendorName' },
+      { text: 'Availibility Status', value: 'available' },
+      { text: 'Assigned To', value: 'assignedTo' },
+      { text: 'Actions', value: 'action', sortable: false }
     ],
     items: [
-      { name: 'Chair', vendor: 'abc', status: 'used' },
-      { name: 'Table', vendor: 'abc', status: 'used' },
-      { name: 'Laptop', vendor: 'abc', status: 'used' },
-      { name: 'Keyboard', vendor: 'abc', status: 'used' },
-      { name: 'Mouse', vendor: 'abc', status: 'used' },
-      { name: 'Phone', vendor: 'abc', status: 'used' }
-    ],
-    editedItem: {
-      name: '',
-      vendor: '',
-      status: ''
-    }
+      {
+        equipmentName: 'Chair',
+        equipmentCode: '003-C32V-0012',
+        addedDate: '04-20-2020',
+        vendorName: 'abc',
+        available: 'assigned',
+        assignedTo: ''
+      }
+    ]
   }),
   components: {
-    navBar
+    navBar,
+    requestItem,
+    createNew
   },
-  methods:
-  {
-    close () {
-      this.dialog = false
+  methods: {
+    editItem (item) {
+      this.sheet = true
     },
-    deleteItem () {
-      const index = this.items.indexOf()
-      confirm('Are you sure you want to delete this item?')
-      this.desserts.splice(index, 1)
+    deleteItem (item) {
+      const index = this.items.indexOf(item)
+      confirm('Are you sure you want to delete this Item?') && this.items.splice(index, 1)
     }
   },
   mounted () {
