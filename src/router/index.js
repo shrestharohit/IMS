@@ -6,22 +6,28 @@ import Employee from '../views/Employee.vue'
 
 Vue.use(Router)
 
-export default new Router({
-  routes: [
-    {
-      path: '/',
-      name: 'login',
-      component: Login
-    },
-    {
-      path: '/admin',
-      name: 'admin',
-      component: Admin
-    },
-    {
-      path: '/employee',
-      name: 'employee',
-      component: Employee
-    }
-  ]
+const routes = [
+  {
+    path: '/',
+    name: 'login',
+    component: Login
+  },
+  {
+    path: '/admin',
+    name: 'admin',
+    component: Admin
+  },
+  {
+    path: '/employee',
+    name: 'employee',
+    component: Employee
+  }
+]
+
+const router = new Router({
+  mode: 'history',
+  base: process.env.BASE_URL,
+  routes
 })
+
+export default router
