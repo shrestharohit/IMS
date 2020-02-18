@@ -75,25 +75,23 @@ export default {
       {
         text: 'Equipment Name',
         align: 'left',
-        value: 'equipmentName'
+        value: 'name'
       },
-      { text: 'Equipment Code', value: 'equipmentCode' },
-      { text: 'Added Date', value: 'addedDate' },
-      { text: 'Vendor Name', value: 'vendorName' },
+      { text: 'Equipment Code', value: 'code' },
+      { text: 'Added Date', value: 'added_date' },
+      // { text: 'Vendor Name', value: 'vendorName' },
       { text: 'Availibility Status', value: 'available' },
-      { text: 'Assigned To', value: 'assignedTo' },
+      { text: 'Assigned To', value: 'assigned_to.employee.user.username' },
       { text: 'Actions', value: 'action', sortable: false }
     ],
-    items: [
-      {
-        equipmentName: 'Chair',
-        equipmentCode: '003-C32V-0012',
-        addedDate: '04-20-2020',
-        vendorName: 'abc',
-        available: 'assigned',
-        assignedTo: ''
-      }
-    ]
+    items: [],
+    editedIndex: -1,
+    editedItem: {
+      name: '',
+      code: ''
+    },
+    dataUrl: 'http://d4bbac75.ngrok.io/api/item/'
+
   }),
   components: {
     navBar,
@@ -102,19 +100,25 @@ export default {
   },
   methods: {
     editItem (item) {
+      this.editedIndex = this.items.indexOf(item)
+      this.editedItem = Object.assign({}, item)
+      // this.dialog = true
       this.sheet = true
     },
     deleteItem (item) {
       const index = this.items.indexOf(item)
+      this.$axios.delete(this.dataUrl + item.id)
       confirm('Are you sure you want to delete this Item?') && this.items.splice(index, 1)
     },
     getData () {
-      var dataUrl = 'http://a3f2a960.ngrok.io/api/item'
-      this.$axios.get(dataUrl)
-        .then(response => console.log(response))
+      this.$axios.get(this.dataUrl)
+        .then(response => {
+          this.items = response.data
+        }
+        )
     }
   },
-  mounted () {
+  async mounted () {
     if (localStorage.getItem('pageDetails') === 'admin') {
     } else if (localStorage.getItem('pageDetails')) {
       var pageAuth = localStorage.getItem('pageDetails')
@@ -123,7 +127,7 @@ export default {
       this.$router.replace({ name: 'login' })
       localStorage.clear()
     }
-    this.getData()
+    await this.getData()
   }
 }
 </script>
