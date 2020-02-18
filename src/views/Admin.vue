@@ -109,20 +109,20 @@ export default {
       confirm('Are you sure you want to delete this Item?') && this.items.splice(index, 1)
     },
     getData () {
-      var dataUrl = 'http://a3f2a960.ngrok.io/api/item'
+      var dataUrl = 'http://d4bbac75.ngrok.io/api/item'
       this.$axios.get(dataUrl)
         .then(response => console.log(response))
     }
   },
   mounted () {
-    if (localStorage.getItem('pageDetails') === 'admin') {
-    } else if (localStorage.getItem('pageDetails')) {
-      var pageAuth = localStorage.getItem('pageDetails')
-      this.$router.replace({ name: pageAuth })
-    } else {
-      this.$router.replace({ name: 'login' })
-      localStorage.clear()
-    }
+    // if (localStorage.getItem('pageDetails') === 'admin') {
+    // } else if (localStorage.getItem('pageDetails')) {
+    //   var pageAuth = localStorage.getItem('pageDetails')
+    //   this.$router.replace({ name: pageAuth })
+    // } else {
+    //   this.$router.replace({ name: 'login' })
+    //   localStorage.clear()
+    // }
     this.getData()
   }
 }

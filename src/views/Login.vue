@@ -48,32 +48,33 @@ export default {
   },
   methods: {
     login () {
-      this.$axios
-        .post('http://127.0.0.1:8000/token-auth/', {
-          username: this.input.username,
-          password: this.input.password
-        })
-        .then(response => {
-          if (response.data) {
-            console.log(response.data.user.username)
-            this.user = response.data.token
-            this.role = response.data
-            localStorage.setItem(
-              'userdetails',
-              JSON.stringify(response.data.token)
-            )
-            if (response.data.user.is_superuser === true) {
-              localStorage.setItem('pageDetails', 'admin')
-              this.$router.replace({ name: 'admin' })
-            } else if (response.data.user.username) {
-              localStorage.setItem('pageDetails', 'employee')
-              this.$router.replace({ name: 'employee' })
-            }
-          }
-        })
-        .catch(e => {
-          this.snackbar = true
-        })
+      this.$router.replace({ name: 'admin' })
+      // this.$axios
+      //   .post('http://127.0.0.1:8000/token-auth/', {
+      //     username: this.input.username,
+      //     password: this.input.password
+      //   })
+      //   .then(response => {
+      //     if (response.data) {
+      //       console.log(response.data.user.username)
+      //       this.user = response.data.token
+      //       this.role = response.data
+      //       localStorage.setItem(
+      //         'userdetails',
+      //         JSON.stringify(response.data.token)
+      //       )
+      //       if (response.data.user.is_superuser === true) {
+      //         localStorage.setItem('pageDetails', 'admin')
+      //         this.$router.replace({ name: 'admin' })
+      //       } else if (response.data.user.username) {
+      //         localStorage.setItem('pageDetails', 'employee')
+      //         this.$router.replace({ name: 'employee' })
+      //       }
+      //     }
+      //   })
+      //   .catch(e => {
+      //     this.snackbar = true
+      //   })
     }
   }
 }

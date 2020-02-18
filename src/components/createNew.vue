@@ -17,20 +17,6 @@
           ></v-text-field>
         </v-col>
         <v-col cols="12" sm="6" md="2">
-          <v-text-field
-          v-model="input.vendorName"
-          label="Vendor Name"
-          required
-          ></v-text-field>
-        </v-col>
-        <v-col cols="12" sm="6" md="2">
-          <v-text-field
-          v-model="input.addedDate"
-          label="Added Date ( mm-dd-yy )"
-          required
-          ></v-text-field>
-        </v-col>
-        <v-col cols="12" sm="6" md="2">
           <v-switch
           v-model="input.available"
           label="Available"
@@ -52,8 +38,6 @@ export default {
       input: {
         equipmentName: '',
         equipmentCode: '',
-        vendorName: '',
-        addedDate: '',
         available: true
       }
     }
@@ -63,17 +47,13 @@ export default {
     clear () {
       this.input.equipmentName = ''
       this.input.equipmentCode = ''
-      this.input.vendorName = ''
-      this.input.addedDate = ''
       this.input.available = true
     },
     save () {
       this.$axios
         .post('', {
-          equipmentName: this.input.equipmentName,
-          equipmentCode: this.input.equipmentCode,
-          vendorName: this.input.vendorName,
-          addedDate: this.input.addedDate,
+          name: this.input.equipmentName,
+          code: this.input.equipmentCode,
           available: this.input.available
         })
     }
