@@ -23,7 +23,8 @@
           <v-switch
           v-model="input.available"
           label="Available"
-          required></v-switch>
+          required
+          disabled></v-switch>
         </v-col>
         </v-row>
         <v-card-actions>
@@ -59,7 +60,9 @@ export default {
           available: this.input.available
         })
         .then(
-          this.$emit('closeBottomSheet')
+          this.$emit('closeBottomSheet'),
+          this.clear(),
+          this.$emit('reload')
         )
     }
   }
