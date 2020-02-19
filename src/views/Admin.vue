@@ -37,7 +37,7 @@
                 >New Requests</v-btn>
                 <v-bottom-sheet v-model="requestSheet">
                   <v-sheet class="text-center" height="auto">
-                    <requestItem />
+                    <requestItem @verified="requestSheet=false" @reload="loader()"/>
                   </v-sheet>
                 </v-bottom-sheet>
 

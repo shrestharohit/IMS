@@ -29,7 +29,8 @@ export default {
       ],
       newRequests: [],
       uniqueItem: [],
-      dataUrl: 'http://127.0.0.1:8000/api/itemrequest/'
+      dataUrl: 'http://127.0.0.1:8000/api/itemrequest/',
+      approveUrl: 'http://127.0.0.1:8000/api/itemapprove/'
     }
   },
   mounted () {
@@ -41,8 +42,17 @@ export default {
       })
   },
   methods: {
-    verify (item) {
-      console.log(item)
+    verify (itemToVerify) {
+      console.log(itemToVerify.userId, itemToVerify.itemId)
+      this.$axios
+        .post(this.approveUrl, {
+          employee: itemToVerify.userId,
+          item: itemToVerify.itemId
+        })
+        .then(
+          this.$emit('verified'),
+          this.$emit('reload')
+        )
     },
     reject (item) {
       const index = this.newRequests.indexOf(item)
@@ -54,13 +64,17 @@ export default {
           for (let index = 0; index < element.item.length; index++) {
             this.uniqueItem.push({
               username: element.employee.user.username,
-              item: element.item[index].name
+              item: element.item[index].name,
+              userId: element.employee.user.id,
+              itemId: element.item[index].id
             })
           }
         } else {
           this.uniqueItem.push({
             username: element.employee.user.username,
-            item: element.item[0].name
+            item: element.item[0].name,
+            userId: element.employee.user.id,
+            itemId: element.item[0].id
           })
         }
       })
