@@ -27,7 +27,7 @@
                     prepend-inner-icon="mdi-magnify"
                   ></v-text-field>
                 </v-col>
-                <v-btn tile class="black mr-1" dark @click="employee ()">Employee</v-btn>
+                <!-- <v-btn tile class="black mr-1" dark @click="employee ()">Employee</v-btn> -->
                 <!-- New Request page -->
                 <v-btn
                   tile
@@ -122,9 +122,8 @@ export default {
     deleteItem (item) {
       const index = this.items.indexOf(item)
       console.log(item.id)
-      this.$axios.delete(this.dataUrl + item.id + '/')
       confirm('Are you sure you want to delete this Item?') &&
-        this.items.splice(index, 1)
+        this.items.splice(index, 1) && this.$axios.delete(this.dataUrl + item.id + '/')
     },
     getData () {
       this.$axios.get(this.dataUrl).then(response => {
