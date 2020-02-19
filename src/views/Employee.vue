@@ -2,71 +2,63 @@ z<template>
   <div>
     <navBar />
     <v-content>
-      <v-tabs
-        v-model="tab"
-        dark
-        vertical
-      >
+      <!-- <v-tabs v-model="tab" dark vertical>
         <v-tabs-slider></v-tabs-slider>
-        <v-tab
-          v-for="i in tabs"
-          :key="i"
-          :href="`#tab-${i}`"
-          fixed-tabs
-        >
-          Tab {{ i }}
-        </v-tab>
-        <v-tab-item
-          :value="'tab-' + 1"
-        >
-            <v-container class="fill-height" fluid>
-        <v-row align="center" justify="center">
-          <v-col cols="12" sm="8" md="12">
-              <v-card-title>
-                Table
-                <v-spacer />
-                <v-col md="2">
-                  <v-text-field
-                    v-model="search"
-                    label="Search"
-                    solo
-                    filled
-                    rounded
-                    hide-details
-                    dense
-                    clearable
-                    flat
-                    prepend-inner-icon="mdi-magnify"
-                  ></v-text-field>
-                </v-col>
-              </v-card-title>
-              <v-data-table
-                :headers="headers"
-                :items="items"
-                class="elevation-1"
-                :search="search"
-                fixed-header
-                height="380px"
-              >
-                <template v-slot:item.action="{ }">
-                  <v-icon color="green" @click.stop="dialog = true">mdi-plus-circle-outline</v-icon>
+        <v-tab v-for="i in tabs" :key="i" :href="`#tab-${i}`" fixed-tabs>Tab {{ i }}</v-tab>
+        <v-tab-item :value="'tab-' + 1"> -->
+          <v-container class="fill-height" fluid>
+            <v-row align="center" justify="center">
+              <v-col cols="12" sm="8" md="12">
+                <v-card-title>
+                  Table
+                  <v-spacer />
+                  <v-col md="2">
+                    <v-text-field
+                      v-model="search"
+                      label="Search"
+                      solo
+                      filled
+                      rounded
+                      hide-details
+                      dense
+                      clearable
+                      flat
+                      prepend-inner-icon="mdi-magnify"
+                    ></v-text-field>
+                  </v-col>
+
+                  <!-- dialog box on verify -->
+                  <v-btn tile class="black mr-1" dark @click="dialog = true">Verify</v-btn>
                   <v-dialog v-model="dialog" width="500">
                     <v-card>
                       <v-card-title class="headline grey lighten-2" primary-title>Privacy Policy</v-card-title>
 
                       <v-card-text>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</v-card-text>
                       <v-card-actions>
-                        <v-btn color="primary" @click="dialog = false">I accept</v-btn>
+                        <v-spacer/><v-btn tile color="black" dark @click="dialog = false">I accept</v-btn>
                       </v-card-actions>
                     </v-card>
                   </v-dialog>
-                </template>
-              </v-data-table>
-          </v-col>
-        </v-row>
-      </v-container>
-        </v-tab-item>
-      </v-tabs>
+                </v-card-title>
+                <v-data-table
+                  :headers="headers"
+                  :items="items"
+                  class="elevation-1"
+                  :search="search"
+                  fixed-header
+                  height="380px"
+                >
+                  <template v-slot:item.action = {}>
+                    <!-- <v-icon color="green">mdi-plus-circle-outline</v-icon> -->
+                    <v-checkbox
+                    ></v-checkbox>
+                  </template>
+                </v-data-table>
+              </v-col>
+            </v-row>
+          </v-container>
+        <!-- </v-tab-item>
+      </v-tabs> -->
     </v-content>
   </div>
 </template>
@@ -85,7 +77,7 @@ export default {
         align: 'left',
         value: 'name'
       },
-      { text: 'Actions', align: 'right', value: 'action', sortable: false }
+      { text: 'Actions', value: 'action', sortable: false }
     ],
     items: [
       { name: 'Rohit' },
@@ -102,7 +94,8 @@ export default {
   methods: {
     redirect () {
       this.$router.replace({ name: 'admin' })
-    }
+    },
+    verify () {}
   },
   mounted () {
     // if (localStorage.getItem('pageDetails') === 'employee') {
