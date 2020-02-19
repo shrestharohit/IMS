@@ -110,7 +110,7 @@ export default {
         disabled: true
       }
     ],
-    dataUrl: 'http://d4bbac75.ngrok.io/api/item/',
+    dataUrl: 'http://127.0.0.1:8000/api/item/',
     loading: false
   }),
   components: {

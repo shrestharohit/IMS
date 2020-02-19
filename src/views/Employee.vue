@@ -48,10 +48,9 @@ z<template>
                   fixed-header
                   height="380px"
                 >
-                  <template v-slot:item.action = {}>
+                  <template v-slot:item.action ="{}">
                     <!-- <v-icon color="green">mdi-plus-circle-outline</v-icon> -->
-                    <v-checkbox
-                    ></v-checkbox>
+                    <v-checkbox></v-checkbox>
                   </template>
                 </v-data-table>
               </v-col>

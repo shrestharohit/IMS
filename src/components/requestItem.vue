@@ -14,6 +14,7 @@
         <v-icon color="green" @click="verify(item)">mdi-check</v-icon>
         <v-icon color="red" @click="reject(item)">mdi-close</v-icon>
       </template>
+
     </v-data-table>
   </div>
 </template>
@@ -24,17 +25,23 @@ export default {
       requestHeader: [
         {
           text: 'Employee Name',
-          value: 'employeeName'
+          value: 'employee.user.username'
         },
-        { text: 'Equipment Name', value: 'equipmentName' },
+        { text: 'Equipment Name', value: 'abc' },
         { text: 'Action', value: 'action' }
       ],
-      newRequests: [
-        { employeeName: 'Rohit', equipmentName: 'CPU' },
-        { employeeName: 'Sanjeev', equipmentName: 'Monitor' },
-        { employeeName: 'Aditya', equipmentName: 'Phone' }
-      ]
+      newRequests: [],
+      dataUrl: 'http://127.0.0.1:8000/api/itemrequest/'
     }
+  },
+  mounted () {
+    this.$axios
+      .get(this.dataUrl)
+      .then(response => {
+        this.newRequests = response.data
+      })
+  },
+  computed () {
   },
   methods: {
     verify (item) {},
