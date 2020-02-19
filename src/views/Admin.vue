@@ -45,7 +45,7 @@
                 <v-btn tile class="black" dark @click="sheet = !sheet">Create New</v-btn>
                 <v-bottom-sheet v-model="sheet">
                   <v-sheet height="auto">
-                    <createNew @closeBottomSheet="sheet=false" />
+                    <createNew @closeBottomSheet="sheet=false" @reload="loader()" />
                   </v-sheet>
                 </v-bottom-sheet>
               </v-card-title>
