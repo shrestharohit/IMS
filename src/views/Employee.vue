@@ -26,16 +26,18 @@ z<template>
                       prepend-inner-icon="mdi-magnify"
                     ></v-text-field>
                   </v-col>
-
                   <!-- dialog box on verify -->
-                  <v-btn tile class="black mr-1" dark @click="dialog = true">Verify</v-btn>
+                  <v-btn tile class="black mr-1" dark @click="openDialog()">Verify</v-btn>
                   <v-dialog v-model="dialog" width="500">
                     <v-card>
-                      <v-card-title class="headline grey lighten-2" primary-title>Privacy Policy</v-card-title>
-
-                      <v-card-text>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</v-card-text>
+                      <v-card-title class="headline grey lighten-2" primary-title>Selected Items</v-card-title>
+                      <v-card-text>   The items you selected are</v-card-text><hr>
+                      <v-card-text>
+                      <v-chip-group v-for="item in finalItemNames" v-bind:key="item.name">
+                        <v-chip> {{item}} </v-chip></v-chip-group>
+                      </v-card-text>
                       <v-card-actions>
-                        <v-spacer/><v-btn tile color="black" dark @click="dialog = false">I accept</v-btn>
+                        <v-spacer/><v-btn tile color="black" dark @click="verify()">I accept</v-btn>
                       </v-card-actions>
                     </v-card>
                   </v-dialog>
@@ -48,10 +50,8 @@ z<template>
                   fixed-header
                   height="380px"
                 >
-                  <template v-slot:item.action = {}>
-                    <!-- <v-icon color="green">mdi-plus-circle-outline</v-icon> -->
-                    <v-checkbox
-                    ></v-checkbox>
+                  <template v-slot:item.action ="{ item }">
+                    <v-checkbox v-bind:value="item" v-model="selected"></v-checkbox>
                   </template>
                 </v-data-table>
               </v-col>
@@ -79,33 +79,59 @@ export default {
       },
       { text: 'Actions', value: 'action', sortable: false }
     ],
-    items: [
-      { name: 'Rohit' },
-      { name: 'Sanjeev' },
-      { name: 'Prabin' },
-      { name: 'Prahlad' },
-      { name: 'Raju' },
-      { name: 'Summit' }
-    ]
+    items: [],
+    displayedItems: [],
+    selected: [],
+    finalItemId: [],
+    finalItemNames: [],
+    userInfo: ''
   }),
   components: {
     navBar
   },
   methods: {
-    redirect () {
-      this.$router.replace({ name: 'admin' })
+    verify () {
+      this.dialog = false
+      this.$axios.post('http://127.0.0.1:8000/api/itemrequest/', {
+        employee: this.userInfo,
+        item: this.finalItemId
+      }
+      )
     },
-    verify () {}
+    openDialog () {
+      this.dialog = true
+      this.idOfItems()
+    },
+    loadItems () {
+      this.$axios.get('http://127.0.0.1:8000/api/item/').then(response => {
+        this.displayedItems = response.data
+        this.displayedItems.forEach(item => {
+          if (item.available === true) {
+            this.items.push(item)
+          }
+        })
+      })
+    },
+    idOfItems () {
+      this.finalItemId = []
+      this.finalItemNames = []
+      this.selected.forEach(item => {
+        this.finalItemId.push(item.id)
+        this.finalItemNames.push(item.name)
+      })
+    }
   },
   mounted () {
-    // if (localStorage.getItem('pageDetails') === 'employee') {
-    // } else if (localStorage.getItem('pageDetails')) {
-    //   var pageAuth = localStorage.getItem('pageDetails')
-    //   this.$router.replace({ name: pageAuth })
-    // } else {
-    //   this.$router.replace({ name: 'login' })
-    //   localStorage.clear()
-    // }
+    if (localStorage.getItem('pageDetails') === 'employee') {
+    } else if (localStorage.getItem('pageDetails')) {
+      var pageAuth = localStorage.getItem('pageDetails')
+      this.$router.replace({ name: pageAuth })
+    } else {
+      this.$router.replace({ name: 'login' })
+      localStorage.clear()
+    }
+    this.userInfo = localStorage.getItem('userCredentials')
+    this.loadItems()
   }
 }
 </script>

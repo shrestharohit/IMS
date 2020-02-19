@@ -119,9 +119,6 @@ export default {
     createNew
   },
   methods: {
-    employee () {
-      this.$router.replace({ name: 'employee' })
-    },
     deleteItem (item) {
       const index = this.items.indexOf(item)
       console.log(item.id)
@@ -144,14 +141,14 @@ export default {
     }
   },
   mounted () {
-    // if (localStorage.getItem('pageDetails') === 'admin') {
-    // } else if (localStorage.getItem('pageDetails')) {
-    //   var pageAuth = localStorage.getItem('pageDetails')
-    //   this.$router.replace({ name: pageAuth })
-    // } else {
-    //   this.$router.replace({ name: 'login' })
-    //   localStorage.clear()
-    // }
+    if (localStorage.getItem('pageDetails') === 'admin') {
+    } else if (localStorage.getItem('pageDetails')) {
+      var pageAuth = localStorage.getItem('pageDetails')
+      this.$router.replace({ name: pageAuth })
+    } else {
+      this.$router.replace({ name: 'login' })
+      localStorage.clear()
+    }
     this.loader()
   }
 }
