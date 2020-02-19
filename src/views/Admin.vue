@@ -72,6 +72,10 @@
           </v-col>
         </v-row>
       </v-container>
+      <v-snackbar v-model="snackbar" right :timeout="2000" color="green" top>
+        deleted
+        <v-icon dark @click="snackbar = false">mdi-close</v-icon>
+      </v-snackbar>
     </v-content>
   </div>
 </template>
@@ -84,6 +88,7 @@ import createNew from '../components/createNew.vue'
 export default {
   data: () => ({
     sheet: false,
+    snackbar: false,
     requestSheet: false,
     search: '',
     headers: [
@@ -125,6 +130,7 @@ export default {
       this.$axios.delete(this.dataUrl + item.id + '/')
       confirm('Are you sure you want to delete this Item?') &&
         this.items.splice(index, 1)
+      this.snackbar = true
     },
     getData () {
       this.$axios.get(this.dataUrl).then(response => {

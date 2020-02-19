@@ -12,19 +12,26 @@
         <v-icon color="red" @click="reject(item)">mdi-close</v-icon>
       </template>
 </v-data-table>
-
+<v-snackbar v-model="snackbar" right :timeout="2000" color="green" top>
+      {{ this.info }}
+      <v-icon dark @click="snackbar = false">mdi-close</v-icon>
+    </v-snackbar>
   </div>
 </template>
 <script>
 export default {
   data () {
     return {
+      snackbar: false,
+      info: '',
+      color: '',
       requestHeader: [
         {
           text: 'Employee Name',
           value: 'username'
         },
         { text: 'Equipment Name', value: 'item' },
+        { text: 'Status', value: 'status' },
         { text: 'Action', value: 'action' }
       ],
       newRequests: [],
@@ -57,6 +64,8 @@ export default {
     reject (item) {
       const index = this.newRequests.indexOf(item)
       confirm('Reject request?') && this.newRequests.splice(index, 1)
+      this.snackbar = true
+      this.info = 'request rejected'
     },
     displayItems () {
       this.newRequests.forEach(element => {
