@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-app-bar app clipped-left color="grey lighten-2" flat tile>
+    <v-app-bar dense app clipped-left color="grey lighten-2" flat tile>
         <v-app-bar-nav-icon/>
         <v-toolbar-title>{{ this.role }}</v-toolbar-title>
         <v-spacer /><v-btn depressed color="grey lighten-2" @click="logout()">Logout</v-btn>
