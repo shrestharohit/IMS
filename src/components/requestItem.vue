@@ -14,7 +14,6 @@
         <v-icon color="green" @click="verify(item)">mdi-check</v-icon>
         <v-icon color="red" @click="reject(item)">mdi-close</v-icon>
       </template>
-
     </v-data-table>
   </div>
 </template>
@@ -27,7 +26,7 @@ export default {
           text: 'Employee Name',
           value: 'employee.user.username'
         },
-        { text: 'Equipment Name', value: 'abc' },
+        { text: 'Equipment Name', value: '' },
         { text: 'Action', value: 'action' }
       ],
       newRequests: [],
@@ -38,10 +37,9 @@ export default {
     this.$axios
       .get(this.dataUrl)
       .then(response => {
+        console.log(response.data)
         this.newRequests = response.data
       })
-  },
-  computed () {
   },
   methods: {
     verify (item) {},
