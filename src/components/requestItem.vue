@@ -7,7 +7,6 @@
   :headers="requestHeader"
   :items="uniqueItem"
   >
-
       <template v-slot:item.action="{ item }">
         <v-icon color="green" @click="verify(item)">mdi-check</v-icon>
         <v-icon color="red" @click="reject(item)">mdi-close</v-icon>
@@ -37,13 +36,14 @@ export default {
     this.$axios
       .get(this.dataUrl)
       .then(response => {
-        console.log(response.data)
         this.newRequests = response.data
         this.displayItems()
       })
   },
   methods: {
-    verify (item) {},
+    verify (item) {
+      console.log(item)
+    },
     reject (item) {
       const index = this.newRequests.indexOf(item)
       confirm('Reject request?') && this.newRequests.splice(index, 1)
@@ -64,7 +64,6 @@ export default {
           })
         }
       })
-      console.log('element', this.uniqueItem)
     }
   }
 }
