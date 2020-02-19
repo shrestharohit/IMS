@@ -27,7 +27,7 @@
                     prepend-inner-icon="mdi-magnify"
                   ></v-text-field>
                 </v-col>
-                <v-btn tile class="black mr-1" dark @click="employee ()">Employee</v-btn>
+                <!-- <v-btn tile class="black mr-1" dark @click="employee ()">Employee</v-btn> -->
                 <!-- New Request page -->
                 <v-btn
                   tile

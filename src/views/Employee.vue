@@ -10,7 +10,11 @@ z<template>
             <v-row align="center" justify="center">
               <v-col cols="12" sm="8" md="12">
                 <v-card-title>
-                  Table
+                  <v-breadcrumbs :items="myitem">
+                  <template v-slot:divider>
+                    <v-icon>mdi-chevron-right</v-icon>
+                  </template>
+                </v-breadcrumbs>
                   <v-spacer />
                   <v-col md="2">
                     <v-text-field
@@ -31,13 +35,13 @@ z<template>
                   <v-dialog v-model="dialog" width="500">
                     <v-card>
                       <v-card-title class="headline grey lighten-2" primary-title>Selected Items</v-card-title>
-                      <v-card-text>   The items you selected are</v-card-text><hr>
+                      <v-card-text>   The items you selected are</v-card-text>
                       <v-card-text>
                       <v-chip-group v-for="item in finalItemNames" v-bind:key="item.name">
                         <v-chip> {{item}} </v-chip></v-chip-group>
                       </v-card-text>
                       <v-card-actions>
-                        <v-spacer/><v-btn tile color="black" dark @click="verify()">I accept</v-btn>
+                        <v-spacer/><v-btn tile color="black" dark @click="verify()">Done</v-btn>
                       </v-card-actions>
                     </v-card>
                   </v-dialog>
@@ -48,7 +52,8 @@ z<template>
                   class="elevation-1"
                   :search="search"
                   fixed-header
-                  height="380px"
+                  height= auto
+                  dense
                 >
                   <template v-slot:item.action ="{ item }">
                     <v-checkbox v-bind:value="item" v-model="selected"></v-checkbox>
@@ -80,6 +85,17 @@ export default {
       { text: 'Actions', value: 'action', sortable: false }
     ],
     items: [],
+    myitem: [
+      {
+        text: 'Employee',
+        disabled: false,
+        href: '/employee'
+      },
+      {
+        text: 'Home',
+        disabled: true
+      }
+    ],
     displayedItems: [],
     selected: [],
     finalItemId: [],
