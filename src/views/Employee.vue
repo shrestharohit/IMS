@@ -2,78 +2,78 @@ z<template>
   <div>
     <navBar />
     <v-content>
-      <!-- <v-tabs v-model="tab" dark vertical>
-        <v-tabs-slider></v-tabs-slider>
-        <v-tab v-for="i in tabs" :key="i" :href="`#tab-${i}`" fixed-tabs>Tab {{ i }}</v-tab>
-        <v-tab-item :value="'tab-' + 1"> -->
-          <v-container class="fill-height" fluid>
-            <v-row align="center" justify="center">
-              <v-col cols="12" md="4">
-                <v-card-title>
-                  <v-breadcrumbs :items="myitem">
-                  <template v-slot:divider>
-                    <v-icon>mdi-chevron-right</v-icon>
-                  </template>
-                </v-breadcrumbs>
+      <v-container class="fill-height" fluid>
+        <v-col cols="12" md="12">
+          <!-- title -->
+          <v-card-title>
+            <v-breadcrumbs :items="myitem">
+              <template v-slot:divider>
+                <v-icon>mdi-chevron-right</v-icon>
+              </template>
+            </v-breadcrumbs>
+            <v-spacer />
+            <v-col md="2">
+              <v-text-field
+                v-model="search"
+                label="Search"
+                solo
+                filled
+                rounded
+                hide-details
+                dense
+                clearable
+                flat
+                prepend-inner-icon="mdi-magnify"
+              ></v-text-field>
+            </v-col>
+            <!-- dialog box on verify -->
+            <v-btn tile class="black mr-1" dark @click="openDialog()">Request</v-btn>
+            <v-dialog v-model="dialog" width="500">
+              <v-card>
+                <v-card-title class="headline grey lighten-2" primary-title>Selected Items</v-card-title>
+                <v-card-text>The items you selected are</v-card-text>
+                <v-card-text>
+                  <v-chip-group v-for="item in finalItemNames" v-bind:key="item.name">
+                    <v-chip>{{item}}</v-chip>
+                  </v-chip-group>
+                </v-card-text>
+                <v-card-actions>
                   <v-spacer />
-                  <v-col md="2">
-                    <v-text-field
-                      v-model="search"
-                      label="Search"
-                      solo
-                      filled
-                      rounded
-                      hide-details
-                      dense
-                      clearable
-                      flat
-                      prepend-inner-icon="mdi-magnify"
-                    ></v-text-field>
-                  </v-col>
-                  <!-- dialog box on verify -->
-                  <v-btn tile class="black mr-1" dark @click="openDialog()">Verify</v-btn>
-                  <v-dialog v-model="dialog" width="500">
-                    <v-card>
-                      <v-card-title class="headline grey lighten-2" primary-title>Selected Items</v-card-title>
-                      <v-card-text>   The items you selected are</v-card-text>
-                      <v-card-text>
-                      <v-chip-group v-for="item in finalItemNames" v-bind:key="item.name">
-                        <v-chip> {{item}} </v-chip></v-chip-group>
-                      </v-card-text>
-                      <v-card-actions>
-                        <v-spacer/><v-btn tile color="black" dark @click="verify()">Done</v-btn>
-                      </v-card-actions>
-                    </v-card>
-                  </v-dialog>
-                </v-card-title>
-                <v-data-table
-                  :headers="headers"
-                  :items="items"
-                  class="elevation-1"
-                  :search="search"
-                  fixed-header
-                  height= auto
-                  dense
-                >
-                  <template v-slot:item.action ="{ item }">
-                    <v-checkbox v-bind:value="item" v-model="selected"></v-checkbox>
-                  </template>
-                </v-data-table>
-              </v-col>
-              <v-col cols="12" sm="8" md="4">
-                <v-data-table
-                :headers="requestHeaders"
-                  :items="requestItems"
-                  class="elevation-1"
-                  :search="search"
-                  fixed-header
-                  height= auto
-                  dense></v-data-table>
-              </v-col>
-            </v-row>
-          </v-container>
-        <!-- </v-tab-item>
-      </v-tabs> -->
+                  <v-btn tile color="black" dark @click="verify()">Done</v-btn>
+                </v-card-actions>
+              </v-card>
+            </v-dialog>
+          </v-card-title>
+        </v-col>
+
+        <!-- request table -->
+        <v-col cols="12" sm="8" md="6">
+          <v-data-table
+            :headers="headers"
+            :items="items"
+            class="elevation-1"
+            :search="search"
+            fixed-header
+            height= auto
+          >
+            <template v-slot:item.action="{ item }">
+              <v-checkbox v-bind:value="item" v-model="selected"></v-checkbox>
+            </template>
+          </v-data-table>
+        </v-col>
+
+        <!-- request status table-->
+        <v-col cols="12" sm="8" md="6">
+          <v-data-table
+            :headers="requestHeaders"
+            :items="requestItems"
+            class="elevation-1"
+            :search="search"
+            fixed-header
+            height= auto
+          ></v-data-table>
+        </v-col>
+      </v-container>
     </v-content>
   </div>
 </template>
@@ -108,7 +108,7 @@ export default {
     ],
     requestHeaders: [
       { text: 'Item', value: 'item' },
-      { text: 'Status', value: 'status' }
+      { text: 'Status', align: 'center', value: 'status' }
     ],
     displayedItems: [],
     selected: [],
@@ -127,43 +127,41 @@ export default {
       this.$axios.post('http://127.0.0.1:8000/api/itemrequest/', {
         employee: this.userInfo,
         item: this.finalItemId
-      }
-      )
+      })
     },
     openDialog () {
       this.dialog = true
       this.idOfItems()
     },
     async loadItems () {
-      await this.$axios.get('http://127.0.0.1:8000/api/item/').then(response => {
-        this.displayedItems = response.data
-        this.displayedItems.forEach(item => {
-          if (item.available === true) {
-            this.items.push(item)
-          }
-        })
-      })
-      await this.$axios.get('http://127.0.0.1:8000/api/itemrequest/').then(response => {
-        response.data.forEach(Element => {
-          console.log(Element, this.userInfo)
-          // eslint-disable-next-line eqeqeq
-          if (Element.employee.user.id == this.userInfo) {
-            console.log(Element)
-            var newStatus = 'pending'
-            console.log(newStatus)
-            if (Element.item[0].is_accepted === true) {
-              newStatus = 'approved'
-            } else if (Element.item[0].is_accepted === false) {
-              newStatus = 'rejected'
+      await this.$axios
+        .get('http://127.0.0.1:8000/api/item/')
+        .then(response => {
+          this.displayedItems = response.data
+          this.displayedItems.forEach(item => {
+            if (item.available === true) {
+              this.items.push(item)
             }
-            this.requestItems.push({
-              item: Element.item[0].name,
-              status: newStatus
-            })
-          }
+          })
         })
-        console.log(this.requestItems)
-      })
+      await this.$axios
+        .get('http://127.0.0.1:8000/api/itemrequest/')
+        .then(response => {
+          response.data.forEach(Element => {
+            if (Element.employee.user.id === this.userInfo) {
+              var newStatus = 'pending'
+              if (Element.item[0].is_accepted === true) {
+                newStatus = 'approved'
+              } else if (Element.item[0].is_accepted === false) {
+                newStatus = 'rejected'
+              }
+              this.requestItems.push({
+                item: Element.item[0].name,
+                status: newStatus
+              })
+            }
+          })
+        })
     },
     idOfItems () {
       this.finalItemId = []
