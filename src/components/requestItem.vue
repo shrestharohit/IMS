@@ -70,9 +70,7 @@ export default {
     },
     reject (item) {
       const index = this.newRequests.indexOf(item)
-      confirm('Reject request?') && this.newRequests.splice(index, 1)
-      console.log('item', item)
-      this.$axios.post('http://127.0.0.1:8000/api/rejectrequest/', {
+      confirm('Reject request?') && this.newRequests.splice(index, 1) && this.$axios.post('http://127.0.0.1:8000/api/rejectrequest/', {
         employee: item.userId,
         item: item.itemId
       })
