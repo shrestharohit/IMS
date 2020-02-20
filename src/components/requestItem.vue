@@ -9,9 +9,6 @@
   :headers="requestHeader"
   :items="uniqueItem"
   >
-      <template v-slot:item.status="{ item }">
-       <v-btn color="green" v-if="item.status===false"> Pending </v-btn>
-      </template>
       <template v-slot:item.action="{ item }">
         <v-icon color="green" @click="verify(item)">mdi-check</v-icon>
         <v-icon color="red" @click="reject(item)">mdi-close</v-icon>

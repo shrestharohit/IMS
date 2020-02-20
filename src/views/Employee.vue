@@ -75,6 +75,10 @@ z<template>
         </v-col>
       </v-container>
     </v-content>
+    <v-snackbar v-model="snackbar" right :timeout="2000" color="green" top>
+      {{ this.info }}
+      <v-icon dark @click="snackbar = false">mdi-close</v-icon>
+    </v-snackbar>
   </div>
 </template>
 
@@ -83,8 +87,10 @@ import navBar from '../components/navBar.vue'
 export default {
   data: () => ({
     dialog: false,
+    snackbar: false,
     tab: null,
     tabs: 1,
+    info: '',
     search: '',
     headers: [
       {
@@ -127,7 +133,10 @@ export default {
       this.$axios.post('http://127.0.0.1:8000/api/itemrequest/', {
         employee: this.userInfo,
         item: this.finalItemId
-      })
+      }).then(
+        this.snackbar = true,
+        this.info = 'Successfully requested !'
+      )
     },
     openDialog () {
       this.dialog = true
