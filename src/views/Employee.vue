@@ -8,7 +8,7 @@ z<template>
         <v-tab-item :value="'tab-' + 1"> -->
           <v-container class="fill-height" fluid>
             <v-row align="center" justify="center">
-              <v-col cols="12" sm="8" md="12">
+              <v-col cols="12" md="4">
                 <v-card-title>
                   <v-breadcrumbs :items="myitem">
                   <template v-slot:divider>
@@ -60,6 +60,16 @@ z<template>
                   </template>
                 </v-data-table>
               </v-col>
+              <v-col cols="12" sm="8" md="4">
+                <v-data-table
+                :headers="requestHeaders"
+                  :items="requestItems"
+                  class="elevation-1"
+                  :search="search"
+                  fixed-header
+                  height= auto
+                  dense></v-data-table>
+              </v-col>
             </v-row>
           </v-container>
         <!-- </v-tab-item>
@@ -96,10 +106,16 @@ export default {
         disabled: true
       }
     ],
+    requestHeaders: [
+      { text: 'Item', value: 'item' },
+      { text: 'Status', value: 'status' }
+    ],
     displayedItems: [],
     selected: [],
     finalItemId: [],
     finalItemNames: [],
+    requestItems: [],
+    approvedList: [],
     userInfo: ''
   }),
   components: {
@@ -118,14 +134,35 @@ export default {
       this.dialog = true
       this.idOfItems()
     },
-    loadItems () {
-      this.$axios.get('http://127.0.0.1:8000/api/item/').then(response => {
+    async loadItems () {
+      await this.$axios.get('http://127.0.0.1:8000/api/item/').then(response => {
         this.displayedItems = response.data
         this.displayedItems.forEach(item => {
           if (item.available === true) {
             this.items.push(item)
           }
         })
+      })
+      await this.$axios.get('http://127.0.0.1:8000/api/itemrequest/').then(response => {
+        response.data.forEach(Element => {
+          console.log(Element, this.userInfo)
+          // eslint-disable-next-line eqeqeq
+          if (Element.employee.user.id == this.userInfo) {
+            console.log(Element)
+            var newStatus = 'pending'
+            console.log(newStatus)
+            if (Element.item[0].is_accepted === true) {
+              newStatus = 'approved'
+            } else if (Element.item[0].is_accepted === false) {
+              newStatus = 'rejected'
+            }
+            this.requestItems.push({
+              item: Element.item[0].name,
+              status: newStatus
+            })
+          }
+        })
+        console.log(this.requestItems)
       })
     },
     idOfItems () {
@@ -137,7 +174,7 @@ export default {
       })
     }
   },
-  mounted () {
+  async mounted () {
     if (localStorage.getItem('pageDetails') === 'employee') {
     } else if (localStorage.getItem('pageDetails')) {
       var pageAuth = localStorage.getItem('pageDetails')
@@ -147,7 +184,8 @@ export default {
       localStorage.clear()
     }
     this.userInfo = localStorage.getItem('userCredentials')
-    this.loadItems()
+    await this.loadItems()
+    // console.log(this.requestItems)
   }
 }
 </script>
