@@ -77,17 +77,33 @@ export default {
       this.newRequests.forEach(element => {
         if (element.item.length > 1) {
           for (let index = 0; index < element.item.length; index++) {
+            var newStatus = 'pending'
+            console.log(newStatus)
+            if (element.item[index].is_accepted === true) {
+              newStatus = 'approved'
+            } else if (element.item[index].is_accepted === false) {
+              newStatus = 'rejected'
+            }
             this.uniqueItem.push({
               username: element.employee.user.username,
               item: element.item[index].name,
+              status: newStatus,
               userId: element.employee.user.id,
               itemId: element.item[index].id
             })
           }
         } else {
+          var Status = 'pending'
+          // console.log(newStatus)
+          if (element.item[0].is_accepted === true) {
+            Status = 'approved'
+          } else if (element.item[0].is_accepted === false) {
+            Status = 'rejected'
+          }
           this.uniqueItem.push({
             username: element.employee.user.username,
             item: element.item[0].name,
+            status: Status,
             userId: element.employee.user.id,
             itemId: element.item[0].id
           })
