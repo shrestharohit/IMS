@@ -32,9 +32,10 @@
               ></v-text-field>
               <span>{{ errors.first('password')}}</span>
               <br />
-              <v-card-actions>
-                <v-spacer/><v-btn tile type="submit" color="black" dark>Login</v-btn>
-              </v-card-actions>
+              <!-- <v-card-actions> -->
+                <!-- <v-spacer/> -->
+                <v-btn tile type="submit" color="black" dark>Login</v-btn>
+              <!-- </v-card-actions> -->
             </v-form>
           </v-card-text>
         </v-card>
@@ -75,11 +76,11 @@ export default {
     validateBeforeSubmit () {
       this.$validator.validateAll().then((result) => {
         if (result) {
-          alert('Form Submitted!')
+          // alert('Form Submitted!')
           this.login()
         }
 
-        alert('INPUT DETAILS')
+        // alert('INPUT DETAILS')
       })
     },
     login () {
@@ -107,9 +108,6 @@ export default {
             }
           }
         })
-        // .catch(e => {
-        //   this.snackbar = true
-        // })
     }
   }
 }
