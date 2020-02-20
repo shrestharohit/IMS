@@ -5,7 +5,7 @@
       <v-container class="fill-height" fluid>
         <v-row align="center" justify="center">
           <v-col cols="12" sm="8" md="12">
-            <!-- <v-card height="auto"> -->
+
               <v-card-title>
                 <v-breadcrumbs :items="myitem">
                   <template v-slot:divider>
@@ -27,7 +27,7 @@
                     prepend-inner-icon="mdi-magnify"
                   ></v-text-field>
                 </v-col>
-                <!-- <v-btn tile class="black mr-1" dark @click="employee ()">Employee</v-btn> -->
+
                 <!-- New Request page -->
                 <v-btn
                   tile
@@ -35,17 +35,17 @@
                   dark
                   @click="requestSheet = !requestSheet"
                 >New Requests</v-btn>
-                <v-bottom-sheet v-model="requestSheet">
+                <v-bottom-sheet v-model="requestSheet" persistent>
                   <v-sheet class="text-center" height="auto">
-                    <requestItem @verified="requestSheet=false" @reload="loader()"/>
+                    <requestItem @closeSheet="docTitle1()" @verified="snackbar= true, info='Item Assigned'" @reload="loader()"/>
                   </v-sheet>
                 </v-bottom-sheet>
 
                 <!-- Create New page -->
                 <v-btn tile class="black" dark @click="sheet = !sheet">Create New</v-btn>
-                <v-bottom-sheet v-model="sheet">
+                <v-bottom-sheet v-model="sheet" persistent>
                   <v-sheet height="auto">
-                    <createNew @closeBottomSheet="sheet=false" @reload="loader()" />
+                    <createNew @closeBottomSheet="docTitle()" @reload="loader(), snackbar = true, info = 'Item added'" />
                   </v-sheet>
                 </v-bottom-sheet>
               </v-card-title>
@@ -73,7 +73,7 @@
         </v-row>
       </v-container>
       <v-snackbar v-model="snackbar" right :timeout="2000" color="green" top>
-        deleted
+        {{ info }}
         <v-icon dark @click="snackbar = false">mdi-close</v-icon>
       </v-snackbar>
     </v-content>
@@ -89,6 +89,7 @@ export default {
   data: () => ({
     sheet: false,
     snackbar: false,
+    info: '',
     requestSheet: false,
     search: '',
     headers: [
@@ -128,13 +129,14 @@ export default {
       const index = this.items.indexOf(item)
       console.log(item.id)
       this.$axios.delete(this.dataUrl + item.id + '/')
-      confirm('Are you sure you want to delete this Item?') &&
-        this.items.splice(index, 1)
-      this.snackbar = true
+      if (confirm('Are you sure you want to delete this Item?') &&
+        this.items.splice(index, 1)) {
+        this.snackbar = true
+        this.info = 'deleted'
+      }
     },
     getData () {
       this.$axios.get(this.dataUrl).then(response => {
-        console.log(response.data)
         this.items = response.data
       })
     },
@@ -144,6 +146,14 @@ export default {
         this.getData()
         this.loading = false
       }, 1500)
+    },
+    docTitle () {
+      this.sheet = false
+      document.title = 'IMS - admin'
+    },
+    docTitle1 () {
+      this.requestSheet = false
+      document.title = 'IMS - admin'
     }
   },
   mounted () {
@@ -156,6 +166,7 @@ export default {
       localStorage.clear()
     }
     this.loader()
+    document.title = 'IMS -admin'
   }
 }
 </script>

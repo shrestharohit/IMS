@@ -2,6 +2,8 @@
   <div>
     <v-toolbar dark color="black" dense >
       <v-toolbar-title>Request Item</v-toolbar-title>
+      <v-spacer/>
+      <v-icon @click="closeSheet()">mdi-close</v-icon>
     </v-toolbar>
     <v-data-table
   :headers="requestHeader"
@@ -12,7 +14,7 @@
         <v-icon color="red" @click="reject(item)">mdi-close</v-icon>
       </template>
 </v-data-table>
-<v-snackbar v-model="snackbar" right :timeout="2000" color="green" top>
+<v-snackbar v-model="snackbar" right :timeout="2000" color="red" top>
       {{ this.info }}
       <v-icon dark @click="snackbar = false">mdi-close</v-icon>
     </v-snackbar>
@@ -24,7 +26,6 @@ export default {
     return {
       snackbar: false,
       info: '',
-      color: '',
       requestHeader: [
         {
           text: 'Employee Name',
@@ -47,6 +48,7 @@ export default {
         this.newRequests = response.data
         this.displayItems()
       })
+    document.title = 'IMS - requestItem'
   },
   methods: {
     verify (itemToVerify) {
@@ -57,9 +59,13 @@ export default {
           item: itemToVerify.itemId
         })
         .then(
+          this.$emit('closeSheet'),
           this.$emit('verified'),
           this.$emit('reload')
         )
+    },
+    closeSheet () {
+      this.$emit('closeSheet')
     },
     reject (item) {
       const index = this.newRequests.indexOf(item)

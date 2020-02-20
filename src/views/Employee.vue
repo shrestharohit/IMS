@@ -148,6 +148,7 @@ export default {
     }
     this.userInfo = localStorage.getItem('userCredentials')
     this.loadItems()
+    document.title = 'IMS - employee'
   }
 }
 </script>
