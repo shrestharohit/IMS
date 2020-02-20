@@ -145,20 +145,26 @@ export default {
       })
       await this.$axios.get('http://127.0.0.1:8000/api/itemrequest/').then(response => {
         response.data.forEach(Element => {
+          // console.log(Element, this.userInfo)
           // eslint-disable-next-line eqeqeq
           if (Element.employee.user.id == this.userInfo) {
             var newStatus = 'pending'
+            console.log(newStatus)
             if (Element.item[0].is_accepted === true) {
               newStatus = 'approved'
             } else if (Element.item[0].is_accepted === false) {
               newStatus = 'rejected'
             }
-            this.requestItems.push({
-              item: Element.item[0].name,
-              status: newStatus
+            console.log(Element)
+            Element.item.forEach(newitem => {
+              this.requestItems.push({
+                item: newitem.name,
+                status: newStatus
+              })
             })
           }
         })
+        console.log(this.requestItems)
       })
     },
     idOfItems () {
@@ -181,7 +187,7 @@ export default {
     }
     this.userInfo = localStorage.getItem('userCredentials')
     await this.loadItems()
-    document.title = 'IMS - employee'
+    // console.log(this.requestItems)
   }
 }
 </script>

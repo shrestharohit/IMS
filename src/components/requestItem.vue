@@ -9,7 +9,7 @@
   :headers="requestHeader"
   :items="uniqueItem"
   >
-  <template v-slot:item.status="{ item }">
+      <template v-slot:item.status="{ item }">
        <v-btn color="green" v-if="item.status===false"> Pending </v-btn>
       </template>
       <template v-slot:item.action="{ item }">
