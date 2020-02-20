@@ -9,6 +9,9 @@
   :headers="requestHeader"
   :items="uniqueItem"
   >
+  <template v-slot:item.status="{ item }">
+       <v-btn color="green" v-if="item.status===false"> Pending </v-btn>
+      </template>
       <template v-slot:item.action="{ item }">
         <v-icon color="green" @click="verify(item)">mdi-check</v-icon>
         <v-icon color="red" @click="reject(item)">mdi-close</v-icon>
@@ -59,9 +62,10 @@ export default {
           item: itemToVerify.itemId
         })
         .then(
-          this.$emit('closeSheet'),
+          this.closeSheet(),
           this.$emit('verified'),
-          this.$emit('reload')
+          this.$emit('reload'),
+          window.history.go()
         )
     },
     closeSheet () {
@@ -84,13 +88,15 @@ export default {
             } else if (element.item[index].is_accepted === false) {
               newStatus = 'rejected'
             }
-            this.uniqueItem.push({
-              username: element.employee.user.username,
-              item: element.item[index].name,
-              status: newStatus,
-              userId: element.employee.user.id,
-              itemId: element.item[index].id
-            })
+            if (element.item[index].is_accepted === null) {
+              this.uniqueItem.push({
+                username: element.employee.user.username,
+                item: element.item[index].name,
+                status: newStatus,
+                userId: element.employee.user.id,
+                itemId: element.item[index].id
+              })
+            }
           }
         } else {
           var Status = 'pending'
@@ -100,13 +106,15 @@ export default {
           } else if (element.item[0].is_accepted === false) {
             Status = 'rejected'
           }
-          this.uniqueItem.push({
-            username: element.employee.user.username,
-            item: element.item[0].name,
-            status: Status,
-            userId: element.employee.user.id,
-            itemId: element.item[0].id
-          })
+          if (element.item[0].is_accepted === null) {
+            this.uniqueItem.push({
+              username: element.employee.user.username,
+              item: element.item[0].name,
+              status: Status,
+              userId: element.employee.user.id,
+              itemId: element.item[0].id
+            })
+          }
         }
       })
     }
