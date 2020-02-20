@@ -14,13 +14,26 @@
             <v-toolbar-title align="center" justify="center">Welcome to IMS</v-toolbar-title>
           </v-toolbar>
           <v-card-text>
-            <v-form>
-              <br />
-              <v-text-field type="text" v-model="input.username" label="Username" />
-              <v-text-field type="password" v-model="input.password" label="Password" />
+            <v-form @submit="validateBeforeSubmit()">
+              <v-text-field
+              type="text"
+              v-model="input.username"
+              label="Username"
+              v-validate="'required|alpha_num|min:3'"
+              name="username"
+              ></v-text-field>
+                <span>{{ errors.first('username') }}</span>
+              <v-text-field
+              type="password"
+              v-model="input.password"
+              v-validate="'required|min:3'"
+              name="password"
+              label="Password"
+              ></v-text-field>
+              <span>{{ errors.first('password')}}</span>
               <br />
               <v-card-actions>
-                <v-spacer/><v-btn tile color="black" dark @click="login()">Login</v-btn>
+                <v-spacer/><v-btn tile type="submit" color="black" dark>Login</v-btn>
               </v-card-actions>
             </v-form>
           </v-card-text>
@@ -51,12 +64,24 @@ export default {
       user: [],
       role: [],
       snackbar: false
+      // username: '',
+      // password: ''
     }
   },
   mounted () {
     document.title = 'IMS -login'
   },
   methods: {
+    validateBeforeSubmit () {
+      this.$validator.validateAll().then((result) => {
+        if (result) {
+          alert('Form Submitted!')
+          this.login()
+        }
+
+        alert('INPUT DETAILS')
+      })
+    },
     login () {
       this.$router.replace({ name: 'admin' })
       this.$axios
@@ -82,9 +107,9 @@ export default {
             }
           }
         })
-        .catch(e => {
-          this.snackbar = true
-        })
+        // .catch(e => {
+        //   this.snackbar = true
+        // })
     }
   }
 }
