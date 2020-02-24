@@ -160,7 +160,8 @@ export default {
         .then(response => {
           this.displayedItems = response.data
           this.displayedItems.forEach(item => {
-            if (item.available === true && item.is_accepted === null) {
+            // eslint-disable-next-line eqeqeq
+            if (item.available === true && item.is_accepted === null && item.employee.user.id == this.userInfo) {
               this.items.push(item)
             }
           })
