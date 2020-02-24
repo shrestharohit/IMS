@@ -97,9 +97,13 @@ export default {
           }
         })
         .catch(error => {
+          error = JSON.stringify(error)
           this.snackbar = true
-          this.info = 'Incorrect Username or Password. Try Again !'
-          console.log(error)
+          if (error.includes('400')) {
+            this.info = 'Incorrect Username or Password. Try Again !'
+          } else {
+            this.info = 'Server Connection Failed !'
+          }
         }
         )
     }

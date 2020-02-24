@@ -186,7 +186,7 @@ export default {
       })
     },
     getColor () {
-      if (this.info === 'Empty selection !') {
+      if (this.info === 'Empty Selection !') {
         return 'red'
       } else {
         return 'green'
