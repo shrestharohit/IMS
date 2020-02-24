@@ -174,23 +174,15 @@ export default {
               var newStatus
               if (Element.item[index].is_accepted === true) {
                 newStatus = 'approved'
-                this.requestItems.push({
-                  item: Element.item[index].name,
-                  status: newStatus
-                })
               } else if (Element.item[index].is_accepted === false) {
                 newStatus = 'rejected'
-                this.requestItems.push({
-                  item: Element.item[index].name,
-                  status: newStatus
-                })
               } else if (Element.item[index].is_accepted === null) {
                 newStatus = 'pending'
-                this.requestItems.push({
-                  item: Element.item[index].name,
-                  status: newStatus
-                })
               }
+              this.requestItems.push({
+                item: Element.item[index].name,
+                status: newStatus
+              })
             }
           }
         })
