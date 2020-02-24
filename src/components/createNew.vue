@@ -10,7 +10,7 @@
       <v-container align="center" justify="center">
       <v-row>
         <v-col cols="12" sm="3" md="3">
-          <ValidationProvider v-slot="{ errors }" name="equipmentName" rules="required|min:5">
+          <ValidationProvider v-slot="{ errors }" name="equipmentName" rules="required">
           <v-text-field
           v-model="input.equipmentName"
           type="text"
@@ -20,7 +20,7 @@
           </ValidationProvider>
         </v-col>
         <v-col cols="12" sm="6" md="3">
-         <ValidationProvider v-slot="{ errors }" name="equipmentCode" rules="required|min:5">
+         <ValidationProvider v-slot="{ errors }" name="equipmentCode" rules="required">
           <v-text-field
           v-model="input.equipmentCode"
           type="text"

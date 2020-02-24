@@ -29,7 +29,7 @@
                       ></v-text-field>
                     </ValidationProvider>
                     <br />
-                    <v-btn type="submit" >Login</v-btn>
+                    <v-btn tile dark color="black" type="submit" >Login</v-btn>
                   </v-form>
                   </ValidationObserver>
                 </v-card-text>
