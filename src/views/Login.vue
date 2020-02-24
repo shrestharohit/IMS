@@ -40,9 +40,8 @@
       </v-img>
 
       <!-- snackbar -->
-      <v-snackbar v-model="snackbar" right :timeout="2000" color="green lighten-1" top>
-        Status: Login
-        <v-icon dark @click="snackbar = false">mdi-close</v-icon>
+      <v-snackbar v-model="snackbar" :timeout="2000" color="red lighten-1" multi-line top>
+        {{ this.info }}
       </v-snackbar>
     </v-content>
   </div>
@@ -59,7 +58,8 @@ export default {
         username: '',
         password: ''
       },
-      snackbar: false
+      snackbar: false,
+      info: ''
     }
   },
   components: {
@@ -96,6 +96,12 @@ export default {
             }
           }
         })
+        .catch(error => {
+          this.snackbar = true
+          this.info = 'Incorrect Username or Password. Try Again !'
+          console.log(error)
+        }
+        )
     }
   }
 }
