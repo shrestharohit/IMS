@@ -57,7 +57,7 @@ z<template>
             height= "300"
           >
             <template v-slot:item.action="{ item }">
-              <v-checkbox v-bind:value="item" v-model="selected"></v-checkbox>
+              <v-checkbox v-bind:value="item" v-model="selected" ></v-checkbox>
             </template>
           </v-data-table>
         </v-col>
@@ -70,7 +70,14 @@ z<template>
             class="elevation-1"
             fixed-header
             height= "300"
-          ></v-data-table>
+          >
+            <template v-slot:item.status="{ item }">
+              <v-btn style="text-transform:none" small :label="item.status" text :color="getStatusColor(item.status)" >
+                 <v-icon left>
+                   {{ getIcon(item.status) }}
+                   </v-icon> {{ item.status }} </v-btn>
+            </template>
+          </v-data-table>
         </v-col>
       </v-container>
     </v-content>
@@ -113,7 +120,7 @@ export default {
     ],
     requestHeaders: [
       { text: 'Item', value: 'item' },
-      { text: 'Status', align: 'center', value: 'status' }
+      { text: 'Status', align: 'right', value: 'status' }
     ],
     displayedItems: [],
     selected: [],
@@ -129,22 +136,23 @@ export default {
   methods: {
     verify () {
       this.dialog = false
+
+      this.$axios.post('http://127.0.0.1:8000/api/itemrequest/', {
+        employee: this.userInfo,
+        item: this.finalItemId
+      }).then(
+        this.snackbar = true,
+        this.info = 'Successfully Requested !'
+      )
+    },
+    openDialog () {
       if (this.selected.length === 0) {
         this.snackbar = true
         this.info = 'Empty Selection !'
       } else {
-        this.$axios.post('http://127.0.0.1:8000/api/itemrequest/', {
-          employee: this.userInfo,
-          item: this.finalItemId
-        }).then(
-          this.snackbar = true,
-          this.info = 'Successfully Requested !'
-        )
+        this.dialog = true
+        this.idOfItems()
       }
-    },
-    openDialog () {
-      this.dialog = true
-      this.idOfItems()
     },
     async loadItems () {
       await this.$axios
@@ -190,6 +198,25 @@ export default {
         return 'red'
       } else {
         return 'green'
+      }
+    },
+    getStatusColor (item) {
+      console.log(item)
+      if (item === 'pending') {
+        return 'blue'
+      } else if (item === 'approved') {
+        return 'green'
+      } else {
+        return 'red'
+      }
+    },
+    getIcon (item) {
+      if (item === 'pending') {
+        return 'mdi-clock-outline'
+      } else if (item === 'approved') {
+        return 'mdi-check'
+      } else {
+        return 'mdi-close'
       }
     }
   },
