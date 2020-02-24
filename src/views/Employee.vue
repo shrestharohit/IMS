@@ -54,7 +54,7 @@ z<template>
             class="elevation-1"
             :search="search"
             fixed-header
-            height= auto
+            height= "300"
           >
             <template v-slot:item.action="{ item }">
               <v-checkbox v-bind:value="item" v-model="selected"></v-checkbox>
@@ -68,14 +68,13 @@ z<template>
             :headers="requestHeaders"
             :items="requestItems"
             class="elevation-1"
-            :search="search"
             fixed-header
-            height= auto
+            height= "300"
           ></v-data-table>
         </v-col>
       </v-container>
     </v-content>
-    <v-snackbar v-model="snackbar" right :timeout="2000" color="green" top>
+    <v-snackbar v-model="snackbar" right :timeout="2000" :color="getColor()" top>
       {{ this.info }}
       <v-icon dark @click="snackbar = false">mdi-close</v-icon>
     </v-snackbar>
@@ -130,13 +129,18 @@ export default {
   methods: {
     verify () {
       this.dialog = false
-      this.$axios.post('http://127.0.0.1:8000/api/itemrequest/', {
-        employee: this.userInfo,
-        item: this.finalItemId
-      }).then(
-        this.snackbar = true,
-        this.info = 'Successfully requested !'
-      )
+      if (this.selected.length === 0) {
+        this.snackbar = true
+        this.info = 'Empty Selection !'
+      } else {
+        this.$axios.post('http://127.0.0.1:8000/api/itemrequest/', {
+          employee: this.userInfo,
+          item: this.finalItemId
+        }).then(
+          this.snackbar = true,
+          this.info = 'Successfully Requested !'
+        )
+      }
     },
     openDialog () {
       this.dialog = true
@@ -148,24 +152,21 @@ export default {
         .then(response => {
           this.displayedItems = response.data
           this.displayedItems.forEach(item => {
-            if (item.available === true) {
+            if (item.available === true && item.is_accepted !== null) {
               this.items.push(item)
             }
           })
         })
       await this.$axios.get('http://127.0.0.1:8000/api/itemrequest/').then(response => {
         response.data.forEach(Element => {
-          // console.log(Element, this.userInfo)
           // eslint-disable-next-line eqeqeq
           if (Element.employee.user.id == this.userInfo) {
             var newStatus = 'pending'
-            console.log(newStatus)
             if (Element.item[0].is_accepted === true) {
               newStatus = 'approved'
             } else if (Element.item[0].is_accepted === false) {
               newStatus = 'rejected'
             }
-            console.log(Element)
             Element.item.forEach(newitem => {
               this.requestItems.push({
                 item: newitem.name,
@@ -174,7 +175,6 @@ export default {
             })
           }
         })
-        console.log(this.requestItems)
       })
     },
     idOfItems () {
@@ -184,6 +184,13 @@ export default {
         this.finalItemId.push(item.id)
         this.finalItemNames.push(item.name)
       })
+    },
+    getColor () {
+      if (this.info === 'Empty selection !') {
+        return 'red'
+      } else {
+        return 'green'
+      }
     }
   },
   async mounted () {
