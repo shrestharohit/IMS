@@ -64,8 +64,6 @@ export default {
       user: [],
       role: [],
       snackbar: false
-      // username: '',
-      // password: ''
     }
   },
   mounted () {
@@ -75,11 +73,8 @@ export default {
     validateBeforeSubmit () {
       this.$validator.validateAll().then((result) => {
         if (result) {
-          alert('Form Submitted!')
           this.login()
         }
-
-        alert('INPUT DETAILS')
       })
     },
     login () {

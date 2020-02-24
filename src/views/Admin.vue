@@ -37,7 +37,7 @@
                 >New Requests</v-btn>
                 <v-bottom-sheet v-model="requestSheet" persistent>
                   <v-sheet class="text-center" height="auto">
-                    <requestItem @closeSheet="docTitle1()" @verified="snackbar= true, info='Item Assigned'" @reload="loader()"/>
+                    <requestItem @closeSheet="docTitle1()" @verified="snackbar= false, info='Item Assigned'" @reload="loader()"/>
                   </v-sheet>
                 </v-bottom-sheet>
 
@@ -45,7 +45,7 @@
                 <v-btn tile class="black" dark @click="sheet = !sheet">Create New</v-btn>
                 <v-bottom-sheet v-model="sheet" persistent>
                   <v-sheet height="auto">
-                    <createNew @closeBottomSheet="docTitle()" @reload="loader(), snackbar = true, info = 'Item added'" />
+                    <createNew @closeBottomSheet="docTitle()" @reload="loader(), snackbar = false, info = 'Item added'" />
                   </v-sheet>
                 </v-bottom-sheet>
               </v-card-title>
