@@ -5,22 +5,36 @@
       <v-spacer/>
       <v-icon @click="closeSheet()">mdi-close</v-icon>
     </v-toolbar>
-    <ValidationObserver>
-    <v-form @submit="save()">
+    <ValidationObserver ref='form'>
+    <v-form @submit.prevent="onSubmit()">
       <v-container align="center" justify="center">
       <v-row>
         <v-col cols="12" sm="3" md="3">
-          <ValidationProvider rules="required" v-slot="{ validate, errors }">
-          <v-text-field v-model="input.equipmentName" @input="validate" type="text" label="Equipment Name" name="Equipment Name" :error-messages="errors" ></v-text-field>
+          <ValidationProvider v-slot="{ errors }" name="equipmentName" rules="required|min:5">
+          <v-text-field
+          v-model="input.equipmentName"
+          type="text"
+          label="Equipment Name"
+          :error-messages="errors"
+          ></v-text-field>
           </ValidationProvider>
         </v-col>
         <v-col cols="12" sm="6" md="3">
-          <ValidationProvider rules="required" v-slot="{ validate, errors }">
-          <v-text-field v-model="input.equipmentCode" @input="validate" type="text" label="Equipment Code" name="Equipment Code" :error-messages="errors" ></v-text-field>
+         <ValidationProvider v-slot="{ errors }" name="equipmentCode" rules="required|min:5">
+          <v-text-field
+          v-model="input.equipmentCode"
+          type="text"
+          label="Equipment Code"
+          :error-messages="errors"
+          ></v-text-field>
           </ValidationProvider>
         </v-col>
         <v-col cols="12" sm="6" md="2">
-          <v-switch v-model="input.available" label="Available" disabled required></v-switch>
+          <v-switch
+          v-model="input.available"
+          label="Available"
+          disabled
+          ></v-switch>
         </v-col>
       </v-row>
       <v-card-actions>
@@ -39,16 +53,6 @@
 </template>
 <script>
 import { ValidationProvider, ValidationObserver } from 'vee-validate'
-
-// const validation = extend('required', {
-//   validate (value) {
-//     return {
-//       required: true,
-//       valid: ['', null, undefined].indexOf(value) === -1
-//     }
-//   },
-//   computesRequired: true
-// })
 
 export default {
   // validation,
@@ -72,40 +76,34 @@ export default {
     document.title = 'IMS - createNew'
   },
   methods: {
-    validateField (field) {
-      const provider = this.$refs[field]
-
-      // Validate the field
-      return provider.validate()
-    },
     clear () {
       this.input.equipmentName = ''
       this.input.equipmentCode = ''
       this.input.available = true
+      this.$refs.form.reset()
+    },
+    onSubmit () {
+      this.$refs.form.validate().then(success => {
+        if (success) {
+          this.save()
+        }
+      })
     },
     save () {
-      if (this.input.equipmentName !== '' && this.input.equipmentCode !== '') {
-        this.$axios
-          .post('http://127.0.0.1:8000/api/item/', {
-            name: this.input.equipmentName,
-            code: this.input.equipmentCode,
-            available: this.input.available
-          })
-          .then(
-            this.$emit('closeBottomSheet'),
-            this.clear()
-            // this.$emit('reload')
-          )
-      } else {
-        this.snackbar = true
-        this.info = 'input something to add'
-      }
+      this.$axios
+        .post('http://127.0.0.1:8000/api/item/', {
+          name: this.input.equipmentName,
+          code: this.input.equipmentCode,
+          available: this.input.available
+        })
+        .then(
+          this.$emit('closeBottomSheet'),
+          this.clear(),
+          this.$emit('reload')
+        )
     },
     closeSheet () {
       this.$emit('closeBottomSheet')
-    },
-    validate () {
-
     }
   }
 }
