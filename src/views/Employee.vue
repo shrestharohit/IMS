@@ -160,8 +160,7 @@ export default {
         .then(response => {
           this.displayedItems = response.data
           this.displayedItems.forEach(item => {
-            // eslint-disable-next-line eqeqeq
-            if (item.available === true && item.is_accepted === null) {
+            if (item.available === true && item.is_accepted !== null) {
               this.items.push(item)
             }
           })
@@ -170,26 +169,18 @@ export default {
         response.data.forEach(Element => {
           // eslint-disable-next-line eqeqeq
           if (Element.employee.user.id == this.userInfo) {
-            var newStatus
+            var newStatus = 'pending'
             if (Element.item[0].is_accepted === true) {
               newStatus = 'approved'
-              this.requestItems.push({
-                item: Element.item[0].name,
-                status: newStatus
-              })
             } else if (Element.item[0].is_accepted === false) {
               newStatus = 'rejected'
-              this.requestItems.push({
-                item: Element.item[0].name,
-                status: newStatus
-              })
-            } else if (Element.item[0].is_accepted === null) {
-              newStatus = 'pending'
-              this.requestItems.push({
-                item: Element.item[0].name,
-                status: newStatus
-              })
             }
+            Element.item.forEach(newitem => {
+              this.requestItems.push({
+                item: newitem.name,
+                status: newStatus
+              })
+            })
           }
         })
       })
