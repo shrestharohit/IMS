@@ -127,7 +127,6 @@ export default {
   methods: {
     deleteItem (item) {
       const index = this.items.indexOf(item)
-      console.log(item.id)
       this.$axios.delete(this.dataUrl + item.id + '/')
       if (confirm('Are you sure you want to delete this Item?') &&
         this.items.splice(index, 1)) {
