@@ -161,7 +161,7 @@ export default {
           this.displayedItems = response.data
           this.displayedItems.forEach(item => {
             // eslint-disable-next-line eqeqeq
-            if (item.available === true && item.is_accepted === null) {
+            if (item.available === true) {
               this.items.push(item)
             }
           })
@@ -170,25 +170,27 @@ export default {
         response.data.forEach(Element => {
           // eslint-disable-next-line eqeqeq
           if (Element.employee.user.id == this.userInfo) {
-            var newStatus
-            if (Element.item[0].is_accepted === true) {
-              newStatus = 'approved'
-              this.requestItems.push({
-                item: Element.item[0].name,
-                status: newStatus
-              })
-            } else if (Element.item[0].is_accepted === false) {
-              newStatus = 'rejected'
-              this.requestItems.push({
-                item: Element.item[0].name,
-                status: newStatus
-              })
-            } else if (Element.item[0].is_accepted === null) {
-              newStatus = 'pending'
-              this.requestItems.push({
-                item: Element.item[0].name,
-                status: newStatus
-              })
+            for (let index = 0; index < Element.item.length; index++) {
+              var newStatus
+              if (Element.item[index].is_accepted === true) {
+                newStatus = 'approved'
+                this.requestItems.push({
+                  item: Element.item[index].name,
+                  status: newStatus
+                })
+              } else if (Element.item[index].is_accepted === false) {
+                newStatus = 'rejected'
+                this.requestItems.push({
+                  item: Element.item[index].name,
+                  status: newStatus
+                })
+              } else if (Element.item[index].is_accepted === null) {
+                newStatus = 'pending'
+                this.requestItems.push({
+                  item: Element.item[index].name,
+                  status: newStatus
+                })
+              }
             }
           }
         })
