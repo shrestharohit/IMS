@@ -160,14 +160,13 @@ export default {
         .then(response => {
           this.displayedItems = response.data
           this.displayedItems.forEach(item => {
-            if (item.available === true) {
+            if (item.available === true && item.is_accepted === null) {
               this.items.push(item)
             }
           })
         })
       await this.$axios.get('http://127.0.0.1:8000/api/itemrequest/').then(response => {
         response.data.forEach(Element => {
-          console.log(Element)
           // eslint-disable-next-line eqeqeq
           if (Element.employee.user.id == this.userInfo) {
             var newStatus = 'pending'
