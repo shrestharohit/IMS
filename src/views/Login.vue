@@ -1,51 +1,47 @@
 <template>
   <div class="Login">
     <v-content>
-      <v-img
-          src=""
-          gradient="to top right, rgba(255,255,255,.7), rgba(19,199,243,.33)"
-          height="100vh">
-          <v-container class="fill-height" fluid>
-        <v-row justify="center">
-          <v-col cols="12" sm="8" md="4">
-
-        <v-card class="elevation-12" height=auto>
-          <v-toolbar dark class="black">
-            <v-toolbar-title align="center" justify="center">Welcome to IMS</v-toolbar-title>
-          </v-toolbar>
-          <v-card-text>
-            <v-form @submit="validateBeforeSubmit()">
-              <v-text-field
-              type="text"
-              v-model="input.username"
-              label="Username"
-              v-validate="'required|alpha_num|min:3'"
-              name="username"
-              ></v-text-field>
-                <span>{{ errors.first('username') }}</span>
-              <v-text-field
-              type="password"
-              v-model="input.password"
-              v-validate="'required|min:3'"
-              name="password"
-              label="Password"
-              ></v-text-field>
-              <span>{{ errors.first('password')}}</span>
-              <br />
-              <v-card-actions>
-                <v-spacer/><v-btn tile type="submit" color="black" dark>Login</v-btn>
-              </v-card-actions>
-            </v-form>
-          </v-card-text>
-        </v-card>
-          </v-col>
-              </v-row>
-      </v-container>
+      <v-img src gradient="to top right, rgba(255,255,255,.7), rgba(19,199,243,.33)" height="100vh">
+        <v-container class="fill-height" fluid>
+          <v-row justify="center">
+            <v-col cols="12" sm="8" md="4">
+              <v-card class="elevation-12" height="auto">
+                <v-toolbar dark class="black">
+                  <v-toolbar-title align="center" justify="center">Welcome to IMS</v-toolbar-title>
+                </v-toolbar>
+                <v-card-text>
+                  <ValidationObserver ref="form">
+                    <v-form @submit.prevent="onSubmit()">
+                     <ValidationProvider v-slot="{ errors }" name="username" rules="required|alpha_num|min:5">
+                       <v-text-field
+                      type="text"
+                      v-model="input.username"
+                      :error-messages="errors"
+                      label="Username"
+                    ></v-text-field>
+                     </ValidationProvider>
+                    <ValidationProvider v-slot="{ errors }" name="password" rules="required|min:5">
+                      <v-text-field
+                        type="password"
+                        v-model="input.password"
+                        :error-messages="errors"
+                        label="Password"
+                      ></v-text-field>
+                    </ValidationProvider>
+                    <br />
+                    <v-btn type="submit" >Login</v-btn>
+                  </v-form>
+                  </ValidationObserver>
+                </v-card-text>
+              </v-card>
+            </v-col>
+          </v-row>
+        </v-container>
       </v-img>
 
       <!-- snackbar -->
-      <v-snackbar v-model="snackbar" right :timeout="2000" color="red lighten-1" top>
-        The username and/or password is incorrect
+      <v-snackbar v-model="snackbar" right :timeout="2000" color="green lighten-1" top>
+        Status: Login
         <v-icon dark @click="snackbar = false">mdi-close</v-icon>
       </v-snackbar>
     </v-content>
@@ -53,6 +49,8 @@
 </template>
 
 <script>
+import { ValidationProvider, ValidationObserver } from 'vee-validate'
+
 export default {
   name: 'Login',
   data () {
@@ -61,24 +59,25 @@ export default {
         username: '',
         password: ''
       },
-      user: [],
-      role: [],
       snackbar: false
     }
+  },
+  components: {
+    ValidationProvider,
+    ValidationObserver
   },
   mounted () {
     document.title = 'IMS -login'
   },
   methods: {
-    validateBeforeSubmit () {
-      this.$validator.validateAll().then((result) => {
-        if (result) {
+    onSubmit () {
+      this.$refs.form.validate().then(success => {
+        if (success) {
           this.login()
         }
       })
     },
     login () {
-      this.$router.replace({ name: 'admin' })
       this.$axios
         .post('http://127.0.0.1:8000/token-auth/', {
           username: this.input.username,
@@ -86,12 +85,7 @@ export default {
         })
         .then(response => {
           if (response.data) {
-            this.user = response.data.token
-            this.role = response.data
-            localStorage.setItem(
-              'userdetails',
-              JSON.stringify(response.data.token)
-            )
+            localStorage.setItem('userdetails', JSON.stringify(response.data.token))
             if (response.data.user.is_superuser === true) {
               localStorage.setItem('pageDetails', 'admin')
               this.$router.replace({ name: 'admin' })
@@ -102,9 +96,6 @@ export default {
             }
           }
         })
-        // .catch(e => {
-        //   this.snackbar = true
-        // })
     }
   }
 }
