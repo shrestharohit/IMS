@@ -136,7 +136,7 @@ export default {
     },
     getData () {
       this.$axios.get(this.dataUrl).then(response => {
-        this.items = response.data
+        this.items = response.data.results
       })
     },
     loader () {
