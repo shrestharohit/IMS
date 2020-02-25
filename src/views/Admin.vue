@@ -17,6 +17,7 @@
                   <v-text-field
                     v-model="search"
                     label="Search"
+                    @input="searchData()"
                     solo
                     filled
                     rounded
@@ -58,9 +59,16 @@
               ></v-progress-linear>
               <v-data-table
                 :headers="headers"
-                :items="items"
+                :items="items.results"
                 class="elevation-1"
                 :search="search"
+                :itemsPerPage='this.itemsPerPage'
+                :footer-props="{
+                    'items-per-page-options': this.itemsPerPageOptions
+                  }"
+                @update:items-per-page="getItemPerPage"
+                :page='this.page'
+                :server-items-length='this.pageCount'
                 fixed-header
                 height= auto
               >
@@ -101,6 +109,12 @@ export default {
       info: '',
       requestSheet: false,
       search: '',
+      newsearch: '',
+      pagination: '',
+      itemsPerPage: 5,
+      itemsPerPageOptions: [5, 10, 15, 20],
+      page: 0,
+      pageCount: 0,
       headers: [
         {
           text: 'Equipment Name',
@@ -140,6 +154,9 @@ export default {
       this.editedItem = item
       this.sheet = true
     },
+    getItemPerPage (val) {
+      this.getData(val)
+    },
     createNew () {
       this.sheet = true
       this.editedItem = {
@@ -157,17 +174,37 @@ export default {
         this.info = 'Deleted Successfully !'
       }
     },
-    getData () {
-      this.$axios.get(this.dataUrl).then(response => {
+    getData (itemsPerPage) {
+      console.log('HEre', itemsPerPage)
+      this.$axios.get(this.dataUrl + '?limit=' + itemsPerPage + '&offset=' + (13 - itemsPerPage)).then(response => {
         this.items = response.data
+        this.pageCount = response.data.count
       })
     },
+    // watch: {
+    // // whenever itemsPerPage changes, this function will run
+    //   itemsPerPage () {
+    //     console.log('Change')
+    //     this.getData(this.itemsPerPage, this.page)
+    //   },
+    //   deep: true
+    // },
+    // computed: {
+    //   itemsPerPage () {
+    //     return this.itemsPerPage
+    //   }
+    // },
     loader () {
       this.loading = true
       setTimeout(() => {
         this.getData()
         this.loading = false
       }, 1500)
+    },
+    searchData () {
+      this.search = this.$axios.get(this.dataUrl).filter(item => {
+        return item.name.toLowerCase().includes(this.search.toLowerCase())
+      })
     },
     async docTitle () {
       await this.getData()
