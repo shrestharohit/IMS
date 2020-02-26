@@ -62,12 +62,9 @@
                 :items="items.results"
                 class="elevation-1"
                 :search="search"
-                :itemsPerPage='this.itemsPerPage'
-                :footer-props="{
-                    'items-per-page-options': this.itemsPerPageOptions
-                  }"
-                @update:items-per-page="getItemPerPage"
-                :page='this.page'
+                :footer-props="footerProps"
+                @update:page="getPage"
+                :page.sync='this.page'
                 :server-items-length='this.pageCount'
                 fixed-header
                 height= auto
@@ -110,10 +107,11 @@ export default {
       requestSheet: false,
       search: '',
       newsearch: '',
-      pagination: '',
-      itemsPerPage: 5,
-      itemsPerPageOptions: [5, 10, 15, 20],
-      page: 0,
+      footerProps: {
+        itemsPerPageOptions: []
+      },
+      page: 1,
+      pageOptions: [],
       pageCount: 0,
       headers: [
         {
@@ -144,18 +142,20 @@ export default {
       editedItem: ''
     }
   },
-  components: {
-    navBar,
-    requestItem,
-    createNew
-  },
   methods: {
+    getPage (val) {
+      this.getData(val)
+    },
+    getData (getPage) {
+      this.$axios.get(this.dataUrl + '?offset=' + (getPage - 1) * 10)
+        .then(response => {
+          this.items = response.data
+          this.pageCount = response.data.count
+        })
+    },
     async editItem (item) {
       this.editedItem = item
       this.sheet = true
-    },
-    getItemPerPage (val) {
-      this.getData(val)
     },
     createNew () {
       this.sheet = true
@@ -174,26 +174,6 @@ export default {
         this.info = 'Deleted Successfully !'
       }
     },
-    getData (itemsPerPage) {
-      console.log('HEre', itemsPerPage)
-      this.$axios.get(this.dataUrl + '?limit=' + itemsPerPage + '&offset=' + (13 - itemsPerPage)).then(response => {
-        this.items = response.data
-        this.pageCount = response.data.count
-      })
-    },
-    // watch: {
-    // // whenever itemsPerPage changes, this function will run
-    //   itemsPerPage () {
-    //     console.log('Change')
-    //     this.getData(this.itemsPerPage, this.page)
-    //   },
-    //   deep: true
-    // },
-    // computed: {
-    //   itemsPerPage () {
-    //     return this.itemsPerPage
-    //   }
-    // },
     loader () {
       this.loading = true
       setTimeout(() => {
@@ -228,6 +208,11 @@ export default {
     }
     this.loader()
     document.title = 'IMS -admin'
+  },
+  components: {
+    navBar,
+    requestItem,
+    createNew
   }
 }
 
