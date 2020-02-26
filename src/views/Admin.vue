@@ -16,7 +16,7 @@
                 <v-col md="3">
                   <v-text-field
                     v-model="search"
-                    @input="searchData()"
+                    @input="getPage()"
                     label="Search"
                     solo
                     filled
@@ -61,6 +61,7 @@
                 :headers="headers"
                 :items="searchedItems"
                 class="elevation-1"
+                :search="search"
                 :footer-props="footerProps"
                 @update:page="getPage"
                 :page.sync='this.page'
@@ -110,6 +111,7 @@ export default {
         itemsPerPageOptions: []
       },
       page: 1,
+      newPage: '',
       pageOptions: [],
       pageCount: 0,
       searchedItems: [],
@@ -144,14 +146,10 @@ export default {
   },
   methods: {
     getPage (val) {
-      this.getData(val)
-    },
-    getData (getPage) {
-      this.$axios.get(this.dataUrl + '?offset=' + (getPage - 1) * 10)
-        .then(response => {
-          this.items = response.data
-          this.pageCount = response.data.count
-        })
+      if (!val) {
+        val = this.newPage
+      }
+      this.searchData(val)
     },
     async editItem (item) {
       this.editedItem = item
@@ -178,11 +176,10 @@ export default {
       await this.searchData()
     },
     async searchData (getPage) {
-      if (!getPage) {
-        getPage = 1
-      }
       await this.$axios.get(this.dataUrl + '?offset=' + (getPage - 1) * 10).then(response => {
+        this.newPage = getPage
         this.newsearch = response.data.results
+        this.pageCount = response.data.count
         this.searchedItems = this.newsearch.filter(item => item.name.toLowerCase().includes(this.search.toLowerCase()))
       })
     },
@@ -198,6 +195,7 @@ export default {
     }
   },
   async mounted () {
+    this.search = ''
     if (localStorage.getItem('pageDetails') === 'admin') {
     } else if (localStorage.getItem('pageDetails')) {
       var pageAuth = localStorage.getItem('pageDetails')
@@ -207,7 +205,6 @@ export default {
       localStorage.clear()
     }
     await this.loader()
-    console.log('searchedItems', this.searchedItems)
     document.title = 'IMS -admin'
   },
   components: {
