@@ -23,6 +23,7 @@ export default {
       page: 1,
       rowsPerPage: 10,
       pageStart: '',
+      pageStop: '',
       pageCount: ''
     },
     headers: [
