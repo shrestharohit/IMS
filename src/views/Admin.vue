@@ -16,8 +16,8 @@
                 <v-col md="3">
                   <v-text-field
                     v-model="search"
-                    label="Search"
                     @input="searchData()"
+                    label="Search"
                     solo
                     filled
                     rounded
@@ -59,17 +59,13 @@
               ></v-progress-linear>
               <v-data-table
                 :headers="headers"
-                :items="items.results"
+                :items="searchedItems"
                 class="elevation-1"
-                :search="search"
-                :itemsPerPage='this.itemsPerPage'
+                :page.sync='this.page'
                 :footer-props="{
                     'items-per-page-options': this.itemsPerPageOptions
                   }"
-                @update:items-per-page="getItemPerPage"
-                :items-per-page.sync="rowsPerPage"
-                :page='this.page'
-                :pageCount='this.pageCount'
+                @update:page="getPage"
                 fixed-header
                 height= auto
               >
@@ -112,10 +108,10 @@ export default {
       search: '',
       newsearch: '',
       pagination: '',
-      itemsPerPage: 5,
-      itemsPerPageOptions: [5, 10, 15, 20],
-      page: 0,
-      pageCount: '',
+      itemsPerPageOptions: [10],
+      page: 1,
+      pageCount: 0,
+      searchedItems: [],
       headers: [
         {
           text: 'Equipment Name',
@@ -155,11 +151,11 @@ export default {
       this.editedItem = item
       this.sheet = true
     },
-    getItemPerPage (val) {
+    getPage (val) {
       if (val === -1) {
         val = 0
       }
-      this.getData(val)
+      this.searchData()
     },
     createNew () {
       this.sheet = true
@@ -178,40 +174,22 @@ export default {
         this.info = 'Deleted Successfully !'
       }
     },
-    getData (itemsPerPage) {
-      console.log('HEre', itemsPerPage)
-      this.$axios.get(this.dataUrl + '?limit=' + itemsPerPage + '&offset=' + (12 - itemsPerPage)).then(response => {
-        this.items = response.data
-        this.pageCount = response.data.count
-      })
-    },
-    // watch: {
-    // // whenever itemsPerPage changes, this function will run
-    //   itemsPerPage () {
-    //     console.log('Change')
-    //     this.getData(this.itemsPerPage, this.page)
-    //   },
-    //   deep: true
-    // },
-    // computed: {
-    //   itemsPerPage () {
-    //     return this.itemsPerPage
-    //   }
-    // },
     loader () {
       this.loading = true
       setTimeout(() => {
-        this.getData()
+        this.searchData(5)
         this.loading = false
       }, 1500)
     },
-    searchData () {
-      this.search = this.$axios.get(this.dataUrl).filter(item => {
-        return item.name.toLowerCase().includes(this.search.toLowerCase())
+    async searchData (getPage) {
+      console.log(getPage)
+      await this.$axios.get(this.dataUrl + 'offset=' + (getPage - 1) * 10).then(response => {
+        this.newsearch = response.data.results
+        this.searchedItems = this.newsearch.filter(item => item.name.toLowerCase().includes(this.search.toLowerCase()))
       })
     },
     async docTitle () {
-      await this.getData()
+      await this.searchData()
       this.sheet = false
       this.editedItem = ''
       document.title = 'IMS - admin'
@@ -232,7 +210,6 @@ export default {
     }
     this.loader()
     document.title = 'IMS -admin'
-    console.log(this.page)
   }
 }
 

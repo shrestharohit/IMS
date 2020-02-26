@@ -14,6 +14,7 @@ z<template>
             <v-spacer />
             <v-col md="2">
               <v-text-field
+                @input="loadItems()"
                 v-model="search"
                 label="Search"
                 solo
@@ -50,14 +51,18 @@ z<template>
         <v-col cols="12" sm="8" md="6">
           <v-data-table
             :headers="headers"
-            :items="items"
-            class="elevation-1"
-            :search="search"
-            fixed-header
-            height= "300"
+                :items="items"
+                class="elevation-1"
+                :itemsPerPage='this.itemsPerPage'
+                :footer-props="{
+                    'items-per-page-options': this.itemsPerPageOptions
+                  }"
+                @update:items-per-page="getItemPerPage"
+                fixed-header
+                height= "300"
           >
             <template v-slot:item.action="{ item }">
-              <v-checkbox v-bind:value="item" v-model="selected" ></v-checkbox>
+              <v-checkbox v-bind:value="item" :key="item.name" v-model="selected" ></v-checkbox>
             </template>
           </v-data-table>
         </v-col>
@@ -128,12 +133,25 @@ export default {
     finalItemNames: [],
     requestItems: [],
     approvedList: [],
-    userInfo: ''
+    userInfo: '',
+    newsearch: '',
+    pagination: '',
+    itemsPerPage: 5,
+    itemsPerPageOptions: [5, 10, 15, 20],
+    page: 1,
+    pageCount: 0,
+    searchedItems: []
   }),
   components: {
     navBar
   },
   methods: {
+    getItemPerPage (val) {
+      if (val === -1) {
+        val = 0
+      }
+      this.loadItems(val)
+    },
     verify () {
       this.dialog = false
 
@@ -154,20 +172,17 @@ export default {
         this.idOfItems()
       }
     },
-    async loadItems () {
+    async loadItems (itemsPerPage) {
       await this.$axios
-        .get('http://127.0.0.1:8000/api/item/')
+        .get('http://127.0.0.1:8000/api/item/' + '?limit=' + itemsPerPage + '&offset=' + (itemsPerPage))
         .then(response => {
-          this.displayedItems = response.data
-          this.displayedItems.forEach(item => {
-            // eslint-disable-next-line eqeqeq
-            if (item.available === true) {
-              this.items.push(item)
-            }
-          })
+          this.displayedItems = response.data.results
+          this.items = this.displayedItems.filter(item => item.name.toLowerCase().includes(this.search.toLowerCase()) && item.available === true && item.is_accepted !== true)
+          console.log(this.items)
         })
       await this.$axios.get('http://127.0.0.1:8000/api/itemrequest/').then(response => {
-        response.data.forEach(Element => {
+        this.displayedItems = response.data.results
+        response.data.results.forEach(Element => {
           // eslint-disable-next-line eqeqeq
           if (Element.employee.user.id == this.userInfo) {
             for (let index = 0; index < Element.item.length; index++) {

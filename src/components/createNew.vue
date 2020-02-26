@@ -96,7 +96,7 @@ export default {
     },
     save () {
       this.$axios
-        .put('http://127.0.0.1:8000/api/item/', {
+        .post('http://127.0.0.1:8000/api/item/', {
           name: this.editedItem.name,
           code: this.editedItem.code,
           available: this.editedItem.available

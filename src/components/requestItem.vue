@@ -45,7 +45,7 @@ export default {
     this.$axios
       .get(this.dataUrl)
       .then(response => {
-        this.newRequests = response.data
+        this.newRequests = response.data.results
         this.displayItems()
       })
     document.title = 'IMS - requestItem'
@@ -78,12 +78,11 @@ export default {
       this.snackbar = true
       this.info = 'request rejected'
     },
-    displayItems () {
-      this.newRequests.forEach(element => {
+    async displayItems () {
+      await this.newRequests.forEach(element => {
         if (element.item.length > 1) {
           for (let index = 0; index < element.item.length; index++) {
             var newStatus = 'pending'
-            console.log(newStatus)
             if (element.item[index].is_accepted === true) {
               newStatus = 'approved'
             } else if (element.item[index].is_accepted === false) {
@@ -97,6 +96,7 @@ export default {
                 userId: element.employee.user.id,
                 itemId: element.item[index].id
               })
+              console.log(this.uniqueItem)
             }
           }
         } else {
