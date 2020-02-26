@@ -67,8 +67,9 @@
                     'items-per-page-options': this.itemsPerPageOptions
                   }"
                 @update:items-per-page="getItemPerPage"
+                :items-per-page.sync="rowsPerPage"
                 :page='this.page'
-                :server-items-length='this.pageCount'
+                :pageCount='this.pageCount'
                 fixed-header
                 height= auto
               >
@@ -114,7 +115,7 @@ export default {
       itemsPerPage: 5,
       itemsPerPageOptions: [5, 10, 15, 20],
       page: 0,
-      pageCount: 0,
+      pageCount: '',
       headers: [
         {
           text: 'Equipment Name',
@@ -155,6 +156,9 @@ export default {
       this.sheet = true
     },
     getItemPerPage (val) {
+      if (val === -1) {
+        val = 0
+      }
       this.getData(val)
     },
     createNew () {
@@ -176,7 +180,7 @@ export default {
     },
     getData (itemsPerPage) {
       console.log('HEre', itemsPerPage)
-      this.$axios.get(this.dataUrl + '?limit=' + itemsPerPage + '&offset=' + (13 - itemsPerPage)).then(response => {
+      this.$axios.get(this.dataUrl + '?limit=' + itemsPerPage + '&offset=' + (12 - itemsPerPage)).then(response => {
         this.items = response.data
         this.pageCount = response.data.count
       })
@@ -228,6 +232,7 @@ export default {
     }
     this.loader()
     document.title = 'IMS -admin'
+    console.log(this.page)
   }
 }
 
