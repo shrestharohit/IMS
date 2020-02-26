@@ -5,6 +5,7 @@
       <v-spacer/>
       <v-icon @click="closeSheet()">mdi-close</v-icon>
     </v-toolbar>
+    <!-- {{ editedItem }} -->
     <ValidationObserver ref='form'>
     <v-form @submit.prevent="onSubmit()">
       <v-container align="center" justify="center">
@@ -12,9 +13,9 @@
         <v-col cols="12" sm="3" md="3">
           <ValidationProvider v-slot="{ errors }" name="equipmentName" rules="required">
           <v-text-field
-          v-model="input.equipmentName"
           type="text"
           label="Equipment Name"
+          v-model="editedItem.name"
           :error-messages="errors"
           ></v-text-field>
           </ValidationProvider>
@@ -22,16 +23,16 @@
         <v-col cols="12" sm="6" md="3">
          <ValidationProvider v-slot="{ errors }" name="equipmentCode" rules="required">
           <v-text-field
-          v-model="input.equipmentCode"
           type="text"
           label="Equipment Code"
+          v-model="editedItem.code"
           :error-messages="errors"
           ></v-text-field>
           </ValidationProvider>
         </v-col>
         <v-col cols="12" sm="6" md="2">
           <v-switch
-          v-model="input.available"
+          :value="editedItem.available"
           label="Available"
           disabled
           ></v-switch>
@@ -52,10 +53,13 @@
   </div>
 </template>
 <script>
+
 import { ValidationProvider, ValidationObserver } from 'vee-validate'
 
 export default {
   // validation,
+
+  name: 'createNew',
   data: function () {
     return {
       valid: true,
@@ -68,6 +72,7 @@ export default {
       }
     }
   },
+  props: ['editedItem'],
   components: {
     ValidationProvider,
     ValidationObserver
@@ -77,9 +82,9 @@ export default {
   },
   methods: {
     clear () {
-      this.input.equipmentName = ''
-      this.input.equipmentCode = ''
-      this.input.available = true
+      this.editedItem.name = ''
+      this.editedItem.code = ''
+      this.editedItem.available = true
       this.$refs.form.reset()
     },
     onSubmit () {
@@ -91,16 +96,22 @@ export default {
     },
     save () {
       this.$axios
-        .post('http://127.0.0.1:8000/api/item/', {
-          name: this.input.equipmentName,
-          code: this.input.equipmentCode,
-          available: this.input.available
+        .put('http://127.0.0.1:8000/api/item/', {
+          name: this.editedItem.name,
+          code: this.editedItem.code,
+          available: this.editedItem.available
         })
-        .then(
-          this.$emit('closeBottomSheet'),
-          this.clear(),
+        .then(() => {
+          this.$emit('closeBottomSheet')
+          this.clear()
           this.$emit('reload')
+        }
         )
+        .catch(e => {
+          this.snackbar = true
+          this.info = 'Cant perfom the task right now !'
+          // throw Error
+        })
     },
     closeSheet () {
       this.$emit('closeBottomSheet')
