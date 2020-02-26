@@ -61,11 +61,10 @@
                 :headers="headers"
                 :items="searchedItems"
                 class="elevation-1"
-                :page.sync='this.page'
-                :footer-props="{
-                    'items-per-page-options': this.itemsPerPageOptions
-                  }"
+                :footer-props="footerProps"
                 @update:page="getPage"
+                :page.sync='this.page'
+                :server-items-length='this.pageCount'
                 fixed-header
                 height= auto
               >
@@ -107,9 +106,11 @@ export default {
       requestSheet: false,
       search: '',
       newsearch: '',
-      pagination: '',
-      itemsPerPageOptions: [10],
+      footerProps: {
+        itemsPerPageOptions: []
+      },
       page: 1,
+      pageOptions: [],
       pageCount: 0,
       searchedItems: [],
       headers: [
@@ -141,21 +142,20 @@ export default {
       editedItem: ''
     }
   },
-  components: {
-    navBar,
-    requestItem,
-    createNew
-  },
   methods: {
+    getPage (val) {
+      this.getData(val)
+    },
+    getData (getPage) {
+      this.$axios.get(this.dataUrl + '?offset=' + (getPage - 1) * 10)
+        .then(response => {
+          this.items = response.data
+          this.pageCount = response.data.count
+        })
+    },
     async editItem (item) {
       this.editedItem = item
       this.sheet = true
-    },
-    getPage (val) {
-      if (val === -1) {
-        val = 0
-      }
-      this.searchData()
     },
     createNew () {
       this.sheet = true
@@ -174,16 +174,14 @@ export default {
         this.info = 'Deleted Successfully !'
       }
     },
-    loader () {
-      this.loading = true
-      setTimeout(() => {
-        this.searchData(5)
-        this.loading = false
-      }, 1500)
+    async loader () {
+      await this.searchData()
     },
     async searchData (getPage) {
-      console.log(getPage)
-      await this.$axios.get(this.dataUrl + 'offset=' + (getPage - 1) * 10).then(response => {
+      if (!getPage) {
+        getPage = 1
+      }
+      await this.$axios.get(this.dataUrl + '?offset=' + (getPage - 1) * 10).then(response => {
         this.newsearch = response.data.results
         this.searchedItems = this.newsearch.filter(item => item.name.toLowerCase().includes(this.search.toLowerCase()))
       })
@@ -199,7 +197,7 @@ export default {
       document.title = 'IMS - admin'
     }
   },
-  mounted () {
+  async mounted () {
     if (localStorage.getItem('pageDetails') === 'admin') {
     } else if (localStorage.getItem('pageDetails')) {
       var pageAuth = localStorage.getItem('pageDetails')
@@ -208,8 +206,14 @@ export default {
       this.$router.replace({ name: 'login' })
       localStorage.clear()
     }
-    this.loader()
+    await this.loader()
+    console.log('searchedItems', this.searchedItems)
     document.title = 'IMS -admin'
+  },
+  components: {
+    navBar,
+    requestItem,
+    createNew
   }
 }
 
